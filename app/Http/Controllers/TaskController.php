@@ -47,15 +47,20 @@ public function index(Request $request)
     $sort = $request->query('sort', 'created_at');
     $statusFilter = $request->query('status');
     $groupBy = $request->query('group_by', 'priority');
+    $search = $request->query('search');
 
     // Base query: tasks for this user and selected date
     $query = Task::where('user_id', $userId)
                  ->whereDate('created_at', $date);
 
     // Filter by status
-    //$statusFilter = 'completed';
     if ($statusFilter) { //if not null, run this
         $query->where('status', $statusFilter);
+    }
+
+     // Search by title
+    if ($search) {
+        $query->where('title', 'like', "%{$search}%");
     }
 
     // Sort
@@ -77,7 +82,7 @@ public function index(Request $request)
     $tasks = $query->get();
 
     // Dynamic grouping
-    $groupBy = 'due_date';
+   
     if ($groupBy === 'priority' || $groupBy === 'status' || $groupBy === 'category') {
         $tasksGrouped = $tasks->groupBy($groupBy);
     } elseif ($groupBy === 'due_date') {

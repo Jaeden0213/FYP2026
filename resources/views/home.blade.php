@@ -519,6 +519,16 @@
         <!-- Toolbar -->
         <div class="toolbar">
             <h1>Tasks</h1>
+              <form method="GET" action="{{ route('tasks.index') }}" class="search-form" style="display:inline-block; margin-left: 20px;">
+        <input 
+            type="text" 
+            name="search" 
+            value="{{ request('search') }}" 
+            placeholder="Search tasks..."
+            style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc;"
+        >
+        <button type="submit" style="padding: 5px 10px;">Search</button>
+    </form>
             <button type="button" onclick="openCreateModal()">+ Add Task</button> 
         </div>
 
@@ -599,6 +609,7 @@
 
     <!-- RIGHT COLUMN (CALENDAR) -->
     <div class="calendar">
+        
   <form method="GET" action="{{ route('tasks.index') }}">
     <label>Select Date:</label>
 
@@ -619,6 +630,42 @@
 
     <!-- Hidden input to submit -->
     <input type="hidden" name="date" id="selected-date" value="{{ request('date', \Carbon\Carbon::today()->toDateString()) }}">
+
+     <!-- Hidden inputs to carry parameters -->
+                      <!-- {} prints the value of the vars, thats why we use it in form for value = {variable} -->
+    <input type="hidden" name="date" id="selected-date" value="{{ $date }}">
+    
+
+    <!-- Sort / Filter / Group UI -->
+     
+    Sort 
+    <select name = "sort"  id="sortSelect">
+        <option value="created_at" {{ $sort === 'created_at' ? 'selected' : '' }}>Created At</option>
+        <option value="priority" {{ $sort === 'priority' ? 'selected' : '' }}>Priority</option>
+        <option value="due_date" {{ $sort === 'due_date' ? 'selected' : '' }}>Due Date</option>
+        <option value="status" {{ $sort === 'status' ? 'selected' : '' }}>Status</option>
+    </select>
+
+    <br>
+    Filter
+    <select name = "status"id="filterSelect">
+        <option value="" {{ $statusFilter === null ? 'selected' : '' }}>All Status</option>
+        <option value="pending" {{ $statusFilter === 'pending' ? 'selected' : '' }}>Pending</option>
+        <option value="in_progress" {{ $statusFilter === 'in_progress' ? 'selected' : '' }}>In Progress</option>
+        <option value="completed" {{ $statusFilter === 'completed' ? 'selected' : '' }}>Completed</option>
+    </select>
+
+    <br>
+    Groupby
+    <select name = "group_by" id="groupBySelect">
+        <option value="priority" {{ $groupBy === 'priority' ? 'selected' : '' }}>Group by Priority</option>
+        <option value="status" {{ $groupBy === 'status' ? 'selected' : '' }}>Group by Status</option>
+        <option value="category" {{ $groupBy === 'category' ? 'selected' : '' }}>Group by Category</option>
+        <option value="due_date" {{ $groupBy === 'due_date' ? 'selected' : '' }}>Group by Due Date</option>
+    </select>
+
+    <br>
+
     
     <button type="submit">Go</button>
   </form>
