@@ -42,10 +42,11 @@ public function index(Request $request)
 {
     $userId = auth()->id();
     
-    // Get query parameters
+    // Get query parameters from the form in blade, also in the url u can see, i think these are default, if havent runform
+    //http://127.0.0.1:8000/tasks?date=2026-01-12&sort=created_at&status=&group_by=priority
     $date = $request->query('date', Carbon::today()->toDateString());
     $sort = $request->query('sort', 'created_at');
-    $statusFilter = $request->query('status');
+    $statusFilter = $request->query('status'); // thats why here no default for filter, as all status is not a enum of status
     $groupBy = $request->query('group_by', 'priority');
     $search = $request->query('search');
 
