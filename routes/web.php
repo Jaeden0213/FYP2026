@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
-
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -38,5 +38,20 @@ Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update
 Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
 Route::patch('/tasks/{task}/toggle-status', [TaskController::class, 'toggleStatus']);
+
+//ADMIN
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+
+    Route::get('/', function () {
+        return view('admin.index');
+    })->name('admin.dashboard');
+
+    Route::get('/users', [AdminController::class, 'userData'])
+        ->name('admin.users');
+
+    Route::get('/growth', [AdminController::class, 'statistics'])
+        ->name('admin.growth');
+
+});
 
 require __DIR__.'/auth.php';

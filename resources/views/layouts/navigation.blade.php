@@ -453,6 +453,28 @@
     </div>
 
     <!-- Navigation Icons -->
+
+    @if(auth()->user()->role === 'admin') 
+        <div class="nav-icons">
+        <a href="{{ route('admin.users') }}" class="nav-icon {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+            <span class="icon">📊</span>
+            <span class="text">Dashboard</span>
+        </a>
+        
+        <a href="{{ route('admin.users') }}" class="nav-icon {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+            <span class="icon">➕</span>
+            <span class="text">Create</span>
+        </a>
+        
+        <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
+            <span class="icon">📋</span>
+            <span class="text">Tasks</span>
+        </a>
+        
+    </div>
+    
+
+    @else 
     <div class="nav-icons">
         <a href="{{ route('dashboard') }}" class="nav-icon {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <span class="icon">📊</span>
@@ -474,6 +496,7 @@
             <span class="text">Games</span>
         </a>
     </div>
+    @endif
 
     <!-- Right Side -->
     <div class="nav-right">
