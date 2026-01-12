@@ -527,6 +527,11 @@
             placeholder="Search tasks..."
             style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ccc;"
         >
+        <input type="hidden" name="date" value="{{ $date }}">
+        <input type="hidden" name="sort" value="{{ $sort }}">
+        <input type="hidden" name="status" value="{{ $statusFilter }}">
+        <input type="hidden" name="group_by" value="{{ $groupBy }}">
+        
         <button type="submit" style="padding: 5px 10px;">Search</button>
     </form>
             <button type="button" onclick="openCreateModal()">+ Add Task</button> 
@@ -627,9 +632,6 @@
 
     <!-- Dates -->
     <div id="calendar-dates"></div>
-
-    <!-- Hidden input to submit -->
-    <input type="hidden" name="date" id="selected-date" value="{{ request('date', \Carbon\Carbon::today()->toDateString()) }}">
 
      <!-- Hidden inputs to carry parameters -->
                       <!-- {} prints the value of the vars, thats why we use it in form for value = {variable} -->
