@@ -22,7 +22,7 @@ class Task extends Model
     public function user(){
         return $this->belongsTo(User::class); // return $this->belongsTo(User::class, 'owner_id'); if u didnt fllw naming conven
     }
-    //go fk urseg
+
 }
 
 

@@ -46,7 +46,25 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function tasks(){
+    public function tasks()
+    {
         return $this->hasMany(Task::class);
     }
+
+    public function points()
+    {
+        return $this->hasMany(\App\Models\Point::class, 'user_id');
+    }
+
+    public function totalPoints(): int
+    {
+        return (int) $this->points()->sum('points_value'); // MUST match your DB column
+    }
+
+
+    public function level(): int
+    {
+        return intdiv($this->totalPoints(), 100) + 1;
+    }
+    
 }

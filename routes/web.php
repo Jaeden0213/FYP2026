@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\StoreController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,5 +54,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.growth');
 
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/store', [StoreController::class, 'index'])->name('store.index');
+    Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
+});
+
+Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
+
 
 require __DIR__.'/auth.php';

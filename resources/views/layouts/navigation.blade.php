@@ -491,16 +491,27 @@
             <span class="text">Tasks</span>
         </a>
         
-        <a href="#" class="nav-icon">
-            <span class="icon">🏆</span>
-            <span class="text">Games</span>
-        </a>
+    <a href="{{ route('store.index') }}" class="nav-icon {{ request()->routeIs('store.*') ? 'active' : '' }}">
+        <span class="icon">🏆</span>
+        <span class="text">Games</span>
+    </a>
+    
+    <a href="{{ route('inventory.index') }}" class="nav-icon {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
+    <span class="icon">🎒</span>
+    <span class="text">Inventory</span>
+    </a>
     </div>
     @endif
 
     <!-- Right Side -->
     <div class="nav-right">
         <!-- Notification -->
+         <div style="display:flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid #e5e7eb; border-radius:24px; background:#f9fafb; font-size:0.9rem; font-weight:600; color:#374151;">
+            <span>⭐ {{ auth()->user()->totalPoints() }} pts</span>
+            <span style="color:#9ca3af;">|</span>
+            <span>🏅 Lvl {{ auth()->user()->level() }}</span>
+        </div>
+
         <button class="notification-btn" onclick="toggleNotifications()">
             <span class="icon">🔔</span>
             <span class="notification-badge">3</span>

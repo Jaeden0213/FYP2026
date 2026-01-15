@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Services\GamificationService;
 
 
 class TaskController extends Controller
@@ -134,21 +135,27 @@ public function index(Request $request)
 
 
     // Update task
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, GamificationService $gamification)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'type' => 'required|in:chores,exercise,study,assignment',
-        'priority' => 'required|in:low,medium,high',
-        'status' => 'required|in:pending,in_progress,completed',
-        'assignee' => 'nullable|string|max:255',
-        'due_date' => 'nullable|date',
-        'points' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
+            'type' => 'required|in:chores,exercise,study,assignment',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:pending,in_progress,completed',
+            'assignee' => 'nullable|string|max:255',
+            'due_date' => 'nullable|date',
+            'points' => 'nullable|integer|min:0',
         ]);
 
         $task = Task::findOrFail($id);
-        $task->update($request->all());
+        $oldStatus = $task->status;
+
+        $task->update($validated);
+
+        if ($oldStatus !== 'completed' && $task->status === 'completed') {
+            $gamification->awardForTaskCompletion(auth()->user(), $task);
+        }
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
@@ -161,11 +168,6 @@ public function index(Request $request)
 
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
     }
-
-
-    
-
-
     
 
 }
