@@ -12,6 +12,7 @@
                             <th class="py-3 px-6 text-left text-sm font-medium text-gray-600 uppercase border border-gray-300">Email</th>
                             <th class="py-3 px-6 text-center text-sm font-medium text-gray-600 uppercase border border-gray-300">Status</th>
                             <th class="py-3 px-6 text-center text-sm font-medium text-gray-600 uppercase border border-gray-300">Created At</th>
+                            <th class="py-3 px-6 text-center text-sm font-medium text-gray-600 uppercase border border-gray-300"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,11 +23,37 @@
                                 <td class="py-3 px-6 text-left text-sm text-gray-700 border border-gray-300">{{ $user->email }}</td>
                                 <td class="py-3 px-6 text-center text-sm border border-gray-300">
                                     <span class="px-3 py-1 rounded-full text-xs font-semibold 
-                                        {{ $user->status === 'inactive' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
+                                        {{ $user->status === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
                                         {{ $user->status ?? 'active' }}
                                     </span>
                                 </td>
                                 <td class="py-3 px-6 text-center text-sm text-gray-500 border border-gray-300">{{ $user->created_at->format('Y-m-d') }}</td>
+                                <td class="py-3 px-6 text-center text-sm border border-gray-300">
+
+                                    @if($user->status === 'active')
+                                        <form method="POST" action="{{ route('admin.suspendUser', $user->id) }}">
+                                            @csrf
+                                            <button type="submit">SUSPEND 🗑</button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.activateUser', $user->id) }}">
+                                            @csrf
+                                            <button type="submit">ACTIVATE 🗑</button>
+                                        </form>
+                                    @endif
+
+                                    <form method="POST" action="{{ route('admin.deleteUser', $user->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">Delete 🗑</button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('admin.promoteUser', $user->id) }}">
+                                        @csrf
+                                        <button type="submit">Promote 🗑</button>
+                                    </form>
+
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
