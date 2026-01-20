@@ -102,6 +102,50 @@ Event::listen(Failed::class, function ($event) {
     ));
 }
 
+public function suspendUser($id){
+
+    $userToBeSuspended = User::findorfail($id);
+    $userToBeSuspended->status = 'suspended';
+    $userToBeSuspended->save();
+
+    $users = User::all();
+    return view('admin.adminUserData', compact('users'));
+
+    
+
+}
+
+public function deleteUser($id){
+    $userToBeDeleted = User::findorfail($id);
+
+    $userToBeDeleted->delete();
+
+    $user = User::all();
+    return view('admin.adminUserData', compact($users));
+}
+
+public function activateUser($id){
+    $userToBeActivated = User::findorfail($id);
+
+    $userToBeActivated->status = 'active';
+    $userToBeActivated->save();
+
+    $users = User::all();
+    return view('admin.adminUserData', compact('users'));
+
+}
+
+public function promoteUser($id){
+    $userToBePromoted = User::findorfail($id);
+
+    $userToBeActivated->role = 'admin';
+    $userToBeActivated->save();
+
+    $users = User::all();
+    return view('admin.adminUserData', compact('users'));
+
+}
+
 }
 
 ?>
