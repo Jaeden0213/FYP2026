@@ -21,7 +21,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('google_id')->nullable();
             $table->string('avatar')->nullable();
-            $table->string('role')->nullable();
+            $table->enum('role', ['admin', 'student'])->default('student');
+            $table->enum('status', ['active', 'suspended'])->default('active');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

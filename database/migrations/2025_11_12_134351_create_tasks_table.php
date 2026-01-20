@@ -17,7 +17,7 @@ return new class extends Migration
         $table->string('title');
         $table->text('description')->nullable();
         $table->enum('priority', ['low', 'medium', 'high']);
-        $table->enum('type', ['chores', 'exercise', 'study', 'assignment']);
+        $table->enum('category', ['chores', 'exercise', 'study', 'assignment']);
         $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
         $table->string('assignee')->nullable();
         $table->date('due_date')->nullable();
