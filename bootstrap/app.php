@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'admin' => \App\Http\Middleware\IsAdmin::class, // Add this line
+            'suspend' => \App\Http\Middleware\CheckSuspended::class,
         ]);
         
         // Add middleware to groups (optional but recommended)

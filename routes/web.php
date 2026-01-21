@@ -15,9 +15,19 @@ Route::get('/home', [TaskController::class, 'index']);
 
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // TASKS
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index'); 
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+});
+
 //auth means ensure that user is logged in, if not, it will redirect user to login page
 //verified means ensure user's (gmail) is verified in their gmail already
 
@@ -30,13 +40,7 @@ Route::middleware('auth')->group(function () {
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-//TASK
 
-Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index'); 
-Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
- // any shit inside of the {} will be passed as parameter in contrler
-Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
-Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
 Route::patch('/tasks/{task}/toggle-status', [TaskController::class, 'toggleStatus']);
 
@@ -44,7 +48,7 @@ Route::patch('/tasks/{task}/toggle-status', [TaskController::class, 'toggleStatu
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
-    Route::get('/', function () {
+    Route::get('/dashboard', function () {
         return view('admin.index');
     })->name('admin.dashboard');
 
@@ -69,6 +73,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 });
 
+//jordon these 2 probably we need to group them like the code above
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/store', [StoreController::class, 'index'])->name('store.index');
     Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
