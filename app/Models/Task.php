@@ -10,7 +10,7 @@ class Task extends Model
         'user_id',
         'title',
         'description',
-        'type',
+        'category',
         'priority',
         'status',
         'assignee',

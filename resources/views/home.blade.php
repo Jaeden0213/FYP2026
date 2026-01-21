@@ -700,8 +700,8 @@
             <textarea name="description" id="taskDescription"></textarea>
 
             <!-- Type -->
-            <label>Type</label>
-            <select name="type" id="taskType" required>
+            <label>Category</label>
+            <select name="category" id="taskType" required>
                 <option value="chores">Chores</option>
                 <option value="exercise">Exercise</option>
                 <option value="study">Study</option>

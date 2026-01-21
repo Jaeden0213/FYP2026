@@ -113,11 +113,14 @@ public function index(Request $request)
     // create new task
    public function store(Request $request)
 {
+
+             
+
     $validated = $request->validate([ // ->all();
         'title' => 'required|string|max:255', //key == name in form
         'description' => 'nullable|string',
-        'type' => 'required|in:chores,exercise,study,assignment',
         'priority' => 'required|in:low,medium,high',
+        'category' => 'required|in:chores,exercise,study,assignment',
         'status' => 'required|in:pending,in_progress,completed',
         'assignee' => 'nullable|string|max:255',
         'due_date' => 'nullable|date',
@@ -126,7 +129,13 @@ public function index(Request $request)
 
     $validated['user_id'] = auth()->id();
 
+    
+
+
+    
     Task::create($validated);
+
+
 
     return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
 }
