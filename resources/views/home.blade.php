@@ -786,7 +786,7 @@
         document.getElementById("taskPriority").value = task.priority;
         document.getElementById("taskPoints").value = task.points || "0";
         document.getElementById("taskStatus").value = task.status;
-        document.getElementById("taskType").value = task.type;
+        document.getElementById("taskType").value = task.category;
 
         document.getElementById("taskModal").style.display = "flex";
     }

@@ -149,7 +149,7 @@ public function index(Request $request)
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'type' => 'required|in:chores,exercise,study,assignment',
+            'category' => 'required|in:chores,exercise,study,assignment',
             'priority' => 'required|in:low,medium,high',
             'status' => 'required|in:pending,in_progress,completed',
             'assignee' => 'nullable|string|max:255',
@@ -177,6 +177,8 @@ public function index(Request $request)
 
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
     }
+
+    
     
 
 }
