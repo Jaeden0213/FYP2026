@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\AppealController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,6 +15,8 @@ Route::get('/', function () {
 
 Route::get('/home', [TaskController::class, 'index']);
 
+Route::post('/appeal', [AppealController::class, 'store'])
+    ->name('appeal.store');
 
 
 Route::middleware(['auth', 'verified', 'suspend'])->group(function () {

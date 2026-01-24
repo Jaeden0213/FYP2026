@@ -30,6 +30,10 @@ class IsAdmin
         }
         
         // For web requests
-        abort(403, 'Unauthorized access, YOU ARE NOT AN ADMIN LOL');
+        //abort(403, 'Unauthorized access, YOU ARE NOT AN ADMIN LOL');
+
+        
+        return response()->view('error.notAdmin', [], 403);
+        
     }
 }
