@@ -21,10 +21,10 @@ class CheckSuspended
             return $next($request);
         }
 
-        // 🚨 USER IS SUSPENDED — LOG THEM OUT
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        //USER IS SUSPENDED — LOG THEM OUT
+        //Auth::logout();
+       // $request->session()->invalidate();
+       // $request->session()->regenerateToken();
 
         // API response
         if ($request->expectsJson()) {

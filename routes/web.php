@@ -15,15 +15,19 @@ Route::get('/', function () {
 
 Route::get('/home', [TaskController::class, 'index']);
 
-Route::post('/appeal', [AppealController::class, 'store'])
-    ->name('appeal.store');
 
+// Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/appeal', [AppealController::class, 'store'])->name('appeal.store');
+});
 
 Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
 
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    
 
     // TASKS
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index'); 
