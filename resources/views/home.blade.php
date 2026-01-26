@@ -479,6 +479,8 @@
     .sidebar:not(.active) .sidebar-icon {
         font-size: 1.3rem;
     }
+
+    
 </style>
 
 <!-- Single wrapper structure -->
@@ -548,13 +550,20 @@
         <div class="priority-section">
             
 
-          <div class="priority-header">
-               @if($groupBy === 'due_date')
-                {{ \Carbon\Carbon::parse($group)->format('M d') }}
-            @else
-                {{ ucfirst($group) }}
-            @endif
-          </div>
+            <div class="priority-header">
+                @if($groupBy === 'due_date')
+                    {{ \Carbon\Carbon::parse($group)->format('M d') }}
+                @else
+                    @php
+                        $ui = config("task_ui.$groupBy.$group");
+                    @endphp
+
+                    <h2 class="{{ $ui['class'] ?? '' }}">
+                        {{ $ui['icon'] ?? '' }}
+                        {{ $ui['label'] ?? ucfirst(str_replace('_', ' ', $group)) }} 
+                    </h2>
+                @endif
+            </div>
 
           @forelse($tasks as $task)
           
@@ -565,12 +574,12 @@
                   <div class="task-title">{{ $task->title }} @if($task->status !== 'completed' 
                         && $task->due_date 
                         && \Carbon\Carbon::parse($task->due_date)->startOfDay()->lt(\Carbon\Carbon::today()))
-                        <span class="overdue-label">(Incomplete)</span>
+                        <span class="overdue-label"> ⚠️ Incomplete </span>
                     @endif
                   </div>
 
                   <div class="task-meta">
-                    <span>Assignee: {{ $task->assignee ?? 'Unassigned' }}</span>
+                    <!-- <span>Assignee: {{ $task->assignee ?? 'Unassigned' }}</span>
                     <span>•</span>
                     <span>
                       due date:
@@ -584,6 +593,14 @@
                     <span>Status: {{ $task->status ?? 'Unassigned' }}</span>
                     <span>•</span>
                     <span>Category: {{ $task->category ?? 'Unassigned' }}</span>
+                    <span>{{ $task->description ?? 'Unassigned' }}</span> -->
+                    <span>
+                     
+                      {{ $task->due_date
+                        ? \Carbon\Carbon::parse($task->due_date)->format('M d')
+                        : 'No due date' }}
+                    </span>
+                    
                   </div>
                 </div>
 
@@ -616,7 +633,7 @@
     <div class="calendar">
         
   <form method="GET" action="{{ route('tasks.index') }}">
-    <label>Select Date:</label>
+    
 
     <!-- Calendar Header -->
     <div class="calendar-header">
@@ -639,33 +656,59 @@
     
 
     <!-- Sort / Filter / Group UI -->
-     
-    Sort 
-    <select name = "sort"  id="sortSelect">
-        <option value="created_at" {{ $sort === 'created_at' ? 'selected' : '' }}>Created At</option>
-        <option value="priority" {{ $sort === 'priority' ? 'selected' : '' }}>Priority</option>
-        <option value="due_date" {{ $sort === 'due_date' ? 'selected' : '' }}>Due Date</option>
-        <option value="status" {{ $sort === 'status' ? 'selected' : '' }}>Status</option>
-    </select>
+     <br>
+   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <!-- Sort Card -->
+    <div class="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+        <div class="flex items-center mb-2">
+            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-2">
+                <i class="fas fa-sort text-blue-600"></i>
+            </div>
+            <span class="font-medium text-gray-700">Sort Tasks</span>
+        </div>
+        <br>
+        <select name="sort" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="created_at" {{ $sort === 'created_at' ? 'selected' : '' }}>Newest First</option>
+            <option value="priority" {{ $sort === 'priority' ? 'selected' : '' }}>Priority (High to Low)</option>
+            <option value="due_date" {{ $sort === 'due_date' ? 'selected' : '' }}>Due Date (Soonest)</option>
+            <option value="status" {{ $sort === 'status' ? 'selected' : '' }}>Status</option>
+        </select>
+    </div>
 
-    <br>
-    Filter
-    <select name = "status"id="filterSelect">
-        <option value="" {{ $statusFilter === null ? 'selected' : '' }}>All Status</option>
-        <option value="pending" {{ $statusFilter === 'pending' ? 'selected' : '' }}>Pending</option>
-        <option value="in_progress" {{ $statusFilter === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-        <option value="completed" {{ $statusFilter === 'completed' ? 'selected' : '' }}>Completed</option>
-    </select>
+    <!-- Filter Card -->
+    <div class="bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-100">
+        <div class="flex items-center mb-2">
+            <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-2">
+                <i class="fas fa-filter text-purple-600"></i>
+            </div>
+            <span class="font-medium text-gray-700">Filter Status</span>
+        </div>
+        <br>
+        <select name="status" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="" {{ $statusFilter === null ? 'selected' : '' }}>Show All Tasks</option>
+            <option value="pending" {{ $statusFilter === 'pending' ? 'selected' : '' }}>⏳ Pending Tasks</option>
+            <option value="in_progress" {{ $statusFilter === 'in_progress' ? 'selected' : '' }}>⚙️ In Progress</option>
+            <option value="completed" {{ $statusFilter === 'completed' ? 'selected' : '' }}>✅ Completed Tasks</option>
+        </select>
+    </div>
 
-    <br>
-    Groupby
-    <select name = "group_by" id="groupBySelect">
-        <option value="priority" {{ $groupBy === 'priority' ? 'selected' : '' }}>Group by Priority</option>
-        <option value="status" {{ $groupBy === 'status' ? 'selected' : '' }}>Group by Status</option>
-        <option value="category" {{ $groupBy === 'category' ? 'selected' : '' }}>Group by Category</option>
-        <option value="due_date" {{ $groupBy === 'due_date' ? 'selected' : '' }}>Group by Due Date</option>
-    </select>
-
+    <!-- Group By Card -->
+    <div class="bg-gradient-to-br from-green-50 to-white p-4 rounded-xl border border-green-100">
+        <div class="flex items-center mb-2">
+            <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-2">
+                <i class="fas fa-layer-group text-green-600"></i>
+            </div>
+            <span class="font-medium text-gray-700">Group View</span>
+        </div>
+        <br>
+        <select name="group_by" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+            <option value="priority" {{ $groupBy === 'priority' ? 'selected' : '' }}>By Priority Level</option>
+            <option value="status" {{ $groupBy === 'status' ? 'selected' : '' }}>By Status</option>
+            <option value="category" {{ $groupBy === 'category' ? 'selected' : '' }}>By Category</option>
+            <option value="due_date" {{ $groupBy === 'due_date' ? 'selected' : '' }}>By Due Date</option>
+        </select>
+    </div>
+</div>
     <br>
 
     
@@ -682,7 +725,7 @@
 </div>
 </x-app-layout>
 
-<!-- Task Modal (Hidden by default) -->
+<!-- Modal (Hidden by default) -->
 <div id="taskModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
         <h2 id="modalTitle" class="modal-title">New Task</h2>

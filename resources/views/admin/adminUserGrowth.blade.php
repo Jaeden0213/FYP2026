@@ -35,6 +35,27 @@
                 <canvas id="growthGraph"></canvas>
             </div>
         </div>
+
+         <!-- Legend -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                    <span>Total User</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                    <span>Weekly Registrations</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                    <span>Monthly Registrations</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="text-xs text-gray-400 mr-2"></div>
+                    <span>Yearly Registrations</span>
+                </div>
+            </div>
+
     </div>
 
     <!-- Chart.js CDN -->

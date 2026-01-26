@@ -438,6 +438,22 @@
     }
 </style>
 
+ @if(auth()->user()->role === 'admin')
+<!-- Fixed Top Navbar -->
+<div class="top-navbar">
+    <!-- Logo -->
+    <a href="{{ route('admin.dashboard') }}" class="nav-logo">
+        <div class="logo-icon">✓</div>
+        <div class="app-name">TaskFlow</div>
+    </a>
+
+    <!-- Search -->
+    <div class="nav-search">
+        <div class="search-icon">🔍</div>
+        <input type="text" class="search-input" placeholder="Search tasks...">
+    </div>
+
+@else
 <!-- Fixed Top Navbar -->
 <div class="top-navbar">
     <!-- Logo -->
@@ -452,23 +468,33 @@
         <input type="text" class="search-input" placeholder="Search tasks...">
     </div>
 
+@endif
+
+
     <!-- Navigation Icons -->
 
     @if(auth()->user()->role === 'admin') 
+    
+
         <div class="nav-icons">
         <a href="{{ route('admin.users') }}" class="nav-icon {{ request()->routeIs('admin.users') ? 'active' : '' }}">
-            <span class="icon">📊</span>
-            <span class="text">Dashboard</span>
+            <span class="icon">🗂️</span>
+            <span class="text">User Management</span>
         </a>
         
         <a href="{{ route('admin.users') }}" class="nav-icon {{ request()->routeIs('admin.users') ? 'active' : '' }}">
-            <span class="icon">➕</span>
-            <span class="text">Create</span>
+            <span class="icon">📈</span>
+            <span class="text">User Growth</span>
         </a>
         
         <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
-            <span class="icon">📋</span>
-            <span class="text">Tasks</span>
+            <span class="icon">🏆</span>
+            <span class="text">Rewards</span>
+        </a>
+
+         <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
+            <span class="icon">📜</span>
+            <span class="text">User Logs</span>
         </a>
         
     </div>
@@ -501,12 +527,8 @@
     <span class="text">Inventory</span>
     </a>
     </div>
-    @endif
 
-    <!-- Right Side -->
-    <div class="nav-right">
-        <!-- Notification -->
-         <div style="display:flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid #e5e7eb; border-radius:24px; background:#f9fafb; font-size:0.9rem; font-weight:600; color:#374151;">
+     <div style="display:flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid #e5e7eb; border-radius:24px; background:#f9fafb; font-size:0.9rem; font-weight:600; color:#374151;">
             <span>⭐ {{ auth()->user()->totalPoints() }} pts</span>
             <span style="color:#9ca3af;">|</span>
             <span>🏅 Lvl {{ auth()->user()->level() }}</span>
@@ -516,6 +538,12 @@
             <span class="icon">🔔</span>
             <span class="notification-badge">3</span>
         </button>
+    @endif
+
+    <!-- Right Side -->
+    <div class="nav-right">
+        <!-- Notification -->
+        
 
         <!-- User Dropdown -->
         <div class="user-dropdown" id="userDropdown">
