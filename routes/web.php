@@ -78,6 +78,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/promoteUser/{id}',[AdminController::class, 'promoteUser'])
         ->name('admin.promoteUser');
 
+    //APPEAL
+    // In web.php
+Route::get('/appeals', [AppealController::class, 'index'])->name('admin.appeals');
+Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])->name('admin.appeals.approve');
+Route::post('/appeals/{appeal}/reject', [AppealController::class, 'reject'])->name('admin.appeals.reject');
+
 
 });
 

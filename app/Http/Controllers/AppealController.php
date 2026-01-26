@@ -21,9 +21,9 @@ class AppealController extends Controller
         ]);
 
         // Prevent multiple pending appeals
-      //  $existingAppeal = Appeal::where('user_id', Auth::id())
-      //      ->where('status', 'pending')
-      //      ->first();
+        $existingAppeal = Appeal::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->first();
 
       //  if ($existingAppeal) {
        //     return back()->with('error', 'You already have a pending appeal.');
@@ -44,7 +44,7 @@ class AppealController extends Controller
         'session_user' => Auth::user() ? Auth::user()->id : 'none',
     ]);
     
-    // Then proceed to create...
+    
     $appeal = Appeal::create([
         'user_id' => $userId,
         'description' => $request->description,
@@ -53,11 +53,39 @@ class AppealController extends Controller
     
     \Log::info('Appeal created', ['appeal_id' => $appeal->id ?? 'failed']);
 
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+    //Auth::logout();
+    //$request->session()->invalidate();
+    //$request->session()->regenerateToken();
     
     return back()->with('success', 'Your appeal has been submitted and is under review.');
 
     }
+
+    
+    public function index()
+{
+    $appeals = Appeal::with('user')->latest()->paginate(10);
+    return view('admin.adminAppeals', compact('appeals'));
+}
+
+public function approve(Appeal $appeal)
+{
+    // Approve appeal and activate user
+    $appeal->update(['status' => 'accepted']);
+    $appeal->user->update(['status' => 'active']); //sumting wong
+    
+    // Optional: Send email notification to user
+    
+    return back()->with('success', 'Appeal approved and user activated successfully.');
+}
+
+public function reject(Appeal $appeal)
+{
+    // Reject appeal
+    $appeal->update(['status' => 'denied']);
+    
+    // Optional: Send email notification to user
+    
+    return back()->with('success', 'Appeal rejected successfully.');
+}
 }

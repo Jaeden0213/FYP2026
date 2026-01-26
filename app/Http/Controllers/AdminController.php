@@ -14,7 +14,8 @@ class AdminController extends Controller {
 
   public function userData(){
     $users = User::all();
-    return view('admin.adminUserData', compact('users')); //take the $users and throw it into the view, var must match the same var in the fn
+    $totalStudents = User::count();
+    return view('admin.adminUserData', compact('users','totalStudents')); //take the $users and throw it into the view, var must match the same var in the fn
 
   }
 
@@ -108,8 +109,10 @@ public function suspendUser($id){
     $userToBeSuspended->status = 'suspended';
     $userToBeSuspended->save();
 
+    $totalStudents = User::count();
+
     $users = User::all();
-    return view('admin.adminUserData', compact('users'));
+    return view('admin.adminUserData', compact('users','totalStudents'));
 
     
 
@@ -117,11 +120,12 @@ public function suspendUser($id){
 
 public function deleteUser($id){
     $userToBeDeleted = User::findorfail($id);
-
     $userToBeDeleted->delete();
 
+     $totalStudents = User::count();
+
     $user = User::all();
-    return view('admin.adminUserData', compact($users));
+    return view('admin.adminUserData', compact('users','totalStudents'));
 }
 
 public function activateUser($id){
@@ -130,8 +134,10 @@ public function activateUser($id){
     $userToBeActivated->status = 'active';
     $userToBeActivated->save();
 
+    $totalStudents = User::count();
+
     $users = User::all();
-    return view('admin.adminUserData', compact('users'));
+    return view('admin.adminUserData', compact('users','totalStudents'));
 
 }
 
@@ -141,8 +147,10 @@ public function promoteUser($id){
     $userToBeActivated->role = 'admin';
     $userToBeActivated->save();
 
+    $totalStudents = User::count();
+
     $users = User::all();
-    return view('admin.adminUserData', compact('users'));
+    return view('admin.adminUserData', compact('users','totalStudents'));
 
 }
 
