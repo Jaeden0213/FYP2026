@@ -52,7 +52,7 @@ public function index(Request $request)
     $search = $request->query('search');
 
     // Base query: tasks for this user and selected date
-    $query = Task::where('user_id', $userId)
+    $query = Task::with('subtasks')->where('user_id', $userId)
                  ->whereDate('created_at', $date);
 
     // Filter by status
@@ -95,7 +95,39 @@ public function index(Request $request)
         $tasksGrouped = $tasks->groupBy('priority'); // fallback
     }
 
+      
+    
+
     return view('home', compact('tasksGrouped', 'groupBy', 'date', 'sort', 'statusFilter'));
+}
+
+// In app/Http/Controllers/TaskController.php
+public function calendar(Request $request)
+{
+    // Get all tasks for the calendar (or apply filters if needed)
+    $tasks = Task::with('subtasks')
+        ->when($request->date, function ($query, $date) {
+            // Filter by selected date if provided
+            return $query->whereDate('due_date', $date);
+        })
+        ->when($request->status, function ($query, $status) {
+            // Filter by status if provided
+            return $query->where('status', $status);
+        })
+        ->when($request->search, function ($query, $search) {
+            // Search in title and description
+            return $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('due_date', 'asc')
+        ->get();
+
+    // Pass the selected date (default to today)
+    $date = $request->date ?? now()->format('Y-m-d');
+
+    return view('calandar', compact('tasks', 'date'));
 }
 
    public function tasksByCategory(){
@@ -160,7 +192,7 @@ public function index(Request $request)
         $task = Task::findOrFail($id);
         $oldStatus = $task->status;
 
-        $task->update($validated);
+        $task->update($validated); // no need user_id?
 
         if ($oldStatus !== 'completed' && $task->status === 'completed') {
             $gamification->awardForTaskCompletion(auth()->user(), $task);

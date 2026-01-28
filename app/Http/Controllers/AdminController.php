@@ -107,7 +107,7 @@ public function suspendUser($id){
 
     $userToBeSuspended = User::findorfail($id);
     $userToBeSuspended->status = 'suspended';
-    $userToBeSuspended->save();
+    $userToBeSuspended->save(); // save no need to make status $fillable
 
     $totalStudents = User::count();
 

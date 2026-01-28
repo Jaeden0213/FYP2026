@@ -7,6 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AppealController;
+use App\Http\Controllers\SubTaskController;
 
 
 Route::get('/', function () {
@@ -34,7 +35,15 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-});
+
+    //SUBTASKS
+    Route::post('/subtasks/{id}', [SubTaskController::class, 'store'])->name('subtasks.store');
+    Route::put('/subtasks/{id}', [SubTaskController::class, 'update'])->name('subtasks.update');
+    Route::delete('/subtasks/{id}', [SubTaskController::class, 'destroy'])->name('subtasks.destroy');
+    });
+
+    //CALANDAR
+    Route::get('/tasks/calendar', [TaskController::class, 'calendar'])->name('tasks.calendar');
 
 //auth means ensure that user is logged in, if not, it will redirect user to login page
 //verified means ensure user's (gmail) is verified in their gmail already
@@ -79,7 +88,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         ->name('admin.promoteUser');
 
     //APPEAL
-    // In web.php
+    
 Route::get('/appeals', [AppealController::class, 'index'])->name('admin.appeals');
 Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])->name('admin.appeals.approve');
 Route::post('/appeals/{appeal}/reject', [AppealController::class, 'reject'])->name('admin.appeals.reject');
