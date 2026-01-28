@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StoreItem extends Model
 {
     protected $fillable = [
-        'name', 'brand', 'points_cost', 'stock', 'is_active', 'description'
+        'name', 'brand', 'points_cost', 'stock', 'is_active', 'description', 'image_path'
     ];
 
     public function redemptions()

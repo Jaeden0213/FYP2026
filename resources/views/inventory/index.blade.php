@@ -1,21 +1,36 @@
+{{-- resources/views/store/my-vouchers.blade.php (example) --}}
 <x-app-layout>
-    <div class="main-content">
-        <h2 style="font-size:20px; font-weight:700;">My Vouchers</h2>
+    <div class="py-6 px-6">
+        <div class="max-w-6xl mx-auto">
 
-        <div style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-            @forelse($redemptions as $r)
-                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px;">
-                    <h3 style="font-weight:700;">{{ $r->storeItem->name }}</h3>
-                    <p style="color:#6b7280;">{{ $r->storeItem->brand }}</p>
-                    <p style="margin-top:8px;">Spent: ⭐ {{ $r->points_spent }} pts</p>
-                    <p>Status: <strong>{{ $r->status ?? 'owned' }}</strong></p>
-                    <p style="color:#9ca3af; font-size:12px; margin-top:6px;">
-                        Redeemed: {{ $r->created_at->format('d M Y, h:i A') }}
-                    </p>
-                </div>
-            @empty
-                <p>You don’t have any vouchers yet.</p>
-            @endforelse
+            <h2 class="text-xl font-bold mb-4">My Vouchers</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @forelse($redemptions as $r)
+                    <div class="bg-white border border-gray-200 rounded-xl p-4">
+                        @if($r->storeItem->image_path)
+                            <img
+                                src="{{ asset('storage/' . $r->storeItem->image_path) }}"
+                                alt="{{ $r->storeItem->name }}"
+                                class="w-full max-h-40 object-cover rounded-lg mb-3 border"
+                            >
+                        @endif
+
+                        <h3 class="font-bold">{{ $r->storeItem->name }}</h3>
+                        <p class="text-gray-500">{{ $r->storeItem->brand }}</p>
+
+                        <p class="mt-2">Spent: ⭐ {{ $r->points_spent }} pts</p>
+                        <p>Status: <strong>{{ $r->status ?? 'Owned' }}</strong></p>
+
+                        <p class="text-gray-400 text-xs mt-2">
+                            Redeemed: {{ $r->created_at->format('d M Y, h:i A') }}
+                        </p>
+                    </div>
+                @empty
+                    <p>You don’t have any vouchers yet.</p>
+                @endforelse
+            </div>
+
         </div>
     </div>
 </x-app-layout>

@@ -1,31 +1,38 @@
-<x-app-layout>
-    <div class="main-content">
-        <h2 style="font-size:20px; font-weight:700;">Voucher Store</h2>
+<x-layouts.game-side-bar title="Voucher Store">
 
-        <p style="margin-bottom:16px;">
-            Your Points: <strong>{{ auth()->user()->totalPoints() }}</strong>
-        </p>
+    <p style="margin-bottom:16px;">
+        Your Points: <strong>{{ auth()->user()->totalPoints() }}</strong>
+    </p>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
-            @forelse($items as $item)
-                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px;">
-                    <h3 style="font-weight:700;">{{ $item->name }}</h3>
-                    <p style="color:#6b7280;">{{ $item->brand }}</p>
-                    <p style="margin:10px 0;">⭐ <strong>{{ $item->points_cost }}</strong> pts</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
+        @forelse($items as $item)
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px;">
+                @if($item->image_path)
+                    <img src="{{ asset('storage/' . $item->image_path) }}"
+                         alt="{{ $item->name }}"
+                         style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:12px;">
+                @else
+                    <div style="width:100%; height:140px; background:#f3f4f6; border-radius:10px;
+                                display:flex; align-items:center; justify-content:center;
+                                color:#9ca3af; margin-bottom:12px;">
+                        No Image
+                    </div>
+                @endif
 
-                    <form method="POST" action="{{ route('store.redeem', $item->id) }}">
-                        @csrf
-                        <button
-                            style="padding:10px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#111827; color:white; cursor:pointer;"
-                            @disabled(auth()->user()->totalPoints() < $item->points_cost)
-                        >
-                            Redeem
-                        </button>
-                    </form>
-                </div>
-            @empty
-                <p>No vouchers available.</p>
-            @endforelse
-        </div>
+                <h3 style="font-weight:700;">{{ $item->name }}</h3>
+                <p style="color:#6b7280;">{{ $item->brand }}</p>
+                <p style="margin:10px 0;">⭐ <strong>{{ $item->points_cost }}</strong> pts</p>
+
+                <form method="POST" action="{{ route('store.redeem', $item->id) }}">
+                    @csrf
+                    <button style="padding:10px 14px; border-radius:10px; background:#111827; color:white;"
+                            @disabled(auth()->user()->totalPoints() < $item->points_cost)>
+                        Redeem
+                    </button>
+                </form>
+            </div>
+        @empty
+            <p>No vouchers available.</p>
+        @endforelse
     </div>
-</x-app-layout>
+</x-layouts.game-side-bar>

@@ -58,8 +58,8 @@
             </a>
 
             <!-- Rewards Management Card -->
-            <a href="{{ route('admin.users') }}" 
-               class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-yellow-200">
+            <a href="{{ route('admin.rewards.index') }}"
+            class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-yellow-200">
                 <div class="h-1 bg-gradient-to-r from-yellow-500 to-amber-400"></div>
                 
                 <div class="p-6 flex flex-col items-center text-center">

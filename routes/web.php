@@ -45,6 +45,16 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     //CALANDAR
     Route::get('/tasks/calendar', [TaskController::class, 'calendar'])->name('tasks.calendar');
 
+    //gamefication - store routes
+    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/store', [StoreController::class, 'index'])->name('store.index');
+    Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
+    Route::get('/store/pomodoro', function () {return view('store.pomodoro');})->name('store.pomodoro');
+});
+
+Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
+
+
 //auth means ensure that user is logged in, if not, it will redirect user to login page
 //verified means ensure user's (gmail) is verified in their gmail already
 
@@ -89,20 +99,27 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     //APPEAL
     
-Route::get('/appeals', [AppealController::class, 'index'])->name('admin.appeals');
-Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])->name('admin.appeals.approve');
-Route::post('/appeals/{appeal}/reject', [AppealController::class, 'reject'])->name('admin.appeals.reject');
+    Route::get('/appeals', [AppealController::class, 'index'])->name('admin.appeals');
+    Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])->name('admin.appeals.approve');
+    Route::post('/appeals/{appeal}/reject', [AppealController::class, 'reject'])->name('admin.appeals.reject');
+
+    // REWARDS (STORE ITEMS)
+    Route::get('/rewards', [AdminController::class, 'rewardsIndex'])->name('admin.rewards.index');
+    Route::get('/rewards/create', [AdminController::class, 'rewardsCreate'])->name('admin.rewards.create');
+    Route::post('/rewards', [AdminController::class, 'rewardsStore'])->name('admin.rewards.store');
+    Route::get('/rewards/add', [AdminController::class, 'rewardsCreate'])->name('admin.addReward');
+
+    Route::get('/rewards/{item}/edit', [AdminController::class, 'rewardsEdit'])->name('admin.rewards.edit');
+    Route::put('/rewards/{item}', [AdminController::class, 'rewardsUpdate'])->name('admin.rewards.update');
+    Route::delete('/rewards/{item}', [AdminController::class, 'rewardsDestroy'])->name('admin.rewards.destroy');
+
+    Route::patch('/rewards/{item}/toggle', [AdminController::class, 'rewardsToggle'])->name('admin.rewards.toggle');
+    Route::patch('/rewards/{item}/stock/inc', [AdminController::class, 'stockInc'])->name('admin.rewards.stock.inc');
+    Route::patch('/rewards/{item}/stock/dec', [AdminController::class, 'stockDec'])->name('admin.rewards.stock.dec');
 
 
 });
 
-//jordon these 2 probably we need to group them like the code above
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/store', [StoreController::class, 'index'])->name('store.index');
-    Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
-});
-
-Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
 
 
 require __DIR__.'/auth.php';

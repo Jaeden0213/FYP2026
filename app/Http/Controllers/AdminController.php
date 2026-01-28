@@ -1,11 +1,12 @@
 <?php
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Event;
 use App\Models\UserLog;
 use App\Models\User;
+use App\Models\StoreItem;
 
 use App\Models\Task;
 use Carbon\Carbon;
@@ -154,6 +155,119 @@ public function promoteUser($id){
 
 }
 
-}
+    // =====================
+    // REWARDS (STORE ITEMS)
+    // =====================
 
+    public function rewardsIndex()
+    {
+        $items = StoreItem::latest()->get();
+        return view('admin.adminManageStore', compact('items'));
+    }
+
+    public function rewardsCreate()
+    {
+        return view('admin.adminAddReward'); // create this blade file
+    }
+
+    public function rewardsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'points_cost' => 'required|integer|min:1',
+            'stock' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048', // ✅ add this
+        ]);
+
+        // ✅ store image BEFORE create()
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('rewards', 'public');
+        }
+
+        $validated['is_active'] = $request->boolean('is_active');
+
+        StoreItem::create($validated);
+
+        return redirect()
+            ->route('admin.rewards.index')
+            ->with('success', 'Reward added successfully!');
+    }
+
+    public function rewardsEdit(StoreItem $item)
+    {
+        return view('admin.adminEditReward', compact('item'));
+    }
+
+    public function rewardsUpdate(Request $request, $id)
+    {
+        $item = StoreItem::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'points_cost' => 'required|integer|min:1',
+            'stock' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $validated['is_active'] = $request->boolean('is_active');
+
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('rewards', 'public');
+        }
+
+        $item->update($validated);
+
+        return redirect()->route('admin.rewards.index')->with('success', 'Reward updated!');
+    }
+
+    public function rewardsDestroy(StoreItem $item)
+    {
+        $item->delete();
+        return redirect()->route('admin.rewards.index')->with('success', 'Reward deleted!');
+    }
+
+    public function rewardsToggle(StoreItem $item)
+    {
+        $item->update(['is_active' => ! $item->is_active]);
+        return back()->with('success', 'Reward status updated!');
+    }
+
+    // +1 stock (ignore if Unlimited)
+    public function stockInc(StoreItem $item)
+    {
+        if ($item->stock === null) {
+            return back()->with('success', 'Unlimited stock - no change.');
+        }
+
+        $item->increment('stock');
+        return back()->with('success', 'Stock increased!');
+    }
+
+    // -1 stock (min 0, ignore if Unlimited)
+    public function stockDec(StoreItem $item)
+    {
+        if ($item->stock === null) {
+            return back()->with('success', 'Unlimited stock - no change.');
+        }
+
+        if ($item->stock <= 0) {
+            return back()->with('success', 'Stock already at 0.');
+        }
+
+        $item->decrement('stock');
+        return back()->with('success', 'Stock decreased!');
+    }
+
+    public function create()
+    {
+        return view('admin.adminAddReward');
+    }
+
+}
 ?>

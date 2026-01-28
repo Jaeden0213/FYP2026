@@ -17,6 +17,7 @@ class StoreItemSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'image_path' => null,
             ],
             [
                 'name' => 'Zus Coffee RM5 Voucher',
@@ -25,6 +26,7 @@ class StoreItemSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'image_path' => null,
             ],
             [
                 'name' => 'GrabFood RM10 Voucher',
@@ -33,6 +35,7 @@ class StoreItemSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'image_path' => null,
             ],
         ]);
     }

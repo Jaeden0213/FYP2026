@@ -487,7 +487,7 @@
             <span class="text">User Growth</span>
         </a>
         
-        <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
+        <a href="{{ route('admin.rewards.index') }}" class="nav-icon {{ request()->routeIs('admin.rewards.index') ? 'active' : '' }}">
             <span class="icon">🏆</span>
             <span class="text">Rewards</span>
         </a>
