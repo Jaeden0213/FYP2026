@@ -196,11 +196,13 @@
                 </div>
 
                 <!-- Filter Tabs -->
+                 
                 <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6 max-w-md">
-                    <button onclick="filterAppeals('all')" 
+                    <button onclick="filterAppeals('all')"  
                             class="flex-1 px-4 py-2 text-sm font-medium rounded-md bg-white shadow-sm">
                         All Appeals
                     </button>
+                    <!-- Header -->
                     <button onclick="filterAppeals('pending')" 
                             class="flex-1 px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-50">
                         Pending
@@ -221,6 +223,7 @@
                 @if($appeals->count() > 0)
                     <div class="divide-y divide-gray-100">
                         @foreach($appeals as $appeal)
+                        <!-- there's a html data in each appeal-card div, used for filter -->
                         <div class="appeal-card" data-status="{{ $appeal->status }}">
                             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                                 <!-- Left Column: User Info & Appeal -->
@@ -342,13 +345,14 @@
 
     <script>
         function filterAppeals(status) {
-            const appeals = document.querySelectorAll('.appeal-card');
+            const appeals = document.querySelectorAll('.appeal-card'); // returns all the div that has .appeal-card
+            // appeals = [ div.appeal-card, div.appeal-card, div.appeal-card, ... ]
             appeals.forEach(appeal => {
-                if (status === 'all' || appeal.dataset.status === status) {
-                    appeal.style.display = '';
+                if (status === 'all' || appeal.dataset.status === status) { //bcos we hv data-status = pending/all/dec/accp
+                    appeal.style.display = ''; 
                 } else {
-                    appeal.style.display = 'none';
-                }
+                    appeal.style.display = 'none'; //hide
+                } // loop tru every div to determine to display or hide it
             });
             
             // Update active tab
