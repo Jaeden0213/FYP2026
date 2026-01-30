@@ -1,4 +1,24 @@
 <x-layouts.game-side-bar title="Voucher Store">
+    <style>
+       button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        white-space: nowrap;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+    </style>
+
 
     <p style="margin-bottom:16px;">
         Your Points: <strong>{{ auth()->user()->totalPoints() }}</strong>
@@ -25,7 +45,7 @@
 
                 <form method="POST" action="{{ route('store.redeem', $item->id) }}">
                     @csrf
-                    <button style="padding:10px 14px; border-radius:10px; background:#111827; color:white;"
+                    <button 
                             @disabled(auth()->user()->totalPoints() < $item->points_cost)>
                         Redeem
                     </button>

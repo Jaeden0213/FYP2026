@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome | JD & Jordan</title>
+    <title>Welcome | JD & Jordon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -355,7 +355,7 @@
 <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="logo">JD & Jordan</div>
+        <div class="logo">JD & Jordon</div>
         <div class="nav-links">
             <a href="{{ route('login') }}" class="nav-link">Features</a>
             <a href="{{ route('login') }}" class="nav-link">About</a>
@@ -474,7 +474,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-logo">JD & Jordan</div>
+        <div class="footer-logo">JD & Jordon</div>
         <p class="footer-text">
             A Final Year Project dedicated to helping students achieve their full potential 
             through smart productivity tools.
@@ -485,7 +485,7 @@
             </a>
         </div>
         <p style="color: #64748b; font-size: 0.875rem;">
-            © 2024 JD & Jordan. All rights reserved.
+            © 2024 JD & Jordon. All rights reserved.
         </p>
     </footer>
 
