@@ -8,13 +8,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
-
+use App\Http\Controllers\AiTaskController; 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/home', [TaskController::class, 'index']);
+//Route::post('/ai/task-breakdown', [AiTaskController::class, 'breakdownTask']);
+
 
 
 // Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
@@ -28,6 +30,7 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    
     
 
     // TASKS
