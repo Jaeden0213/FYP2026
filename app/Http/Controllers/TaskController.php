@@ -157,6 +157,8 @@ public function calendar(Request $request)
         'assignee' => 'nullable|string|max:255',
         'due_date' => 'nullable|date',
         'points' => 'nullable|integer|min:0',
+        'start_time' => 'nullable', // Ensure these are validated
+        'end_time' => 'nullable',
     ]);
 
     $validated['user_id'] = auth()->id();
@@ -187,6 +189,8 @@ public function calendar(Request $request)
             'assignee' => 'nullable|string|max:255',
             'due_date' => 'nullable|date',
             'points' => 'nullable|integer|min:0',
+            'start_time' => 'nullable', // Ensure these are validated
+            'end_time' => 'nullable',
         ]);
 
         $task = Task::findOrFail($id);

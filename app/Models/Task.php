@@ -16,6 +16,8 @@ class Task extends Model
         'assignee',
         'due_date',
         'points',
+        'start_time',
+        'end_time',
 
 ];
 
