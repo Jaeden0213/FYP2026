@@ -116,6 +116,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden; /* Single scroll container */
+        padding-bottom: 40px;
     }
 
     /* ===== Toolbar ===== */
@@ -248,9 +249,10 @@
     .calendar-container {
         background: white;
         border-radius: 12px;
-        border: 1px solid #e5e7eb;
+        padding: 7px;
         overflow: hidden;
         margin-bottom: 24px;
+        border: 0.5px solid #d4d6da;
     }
 
     .calendar-header {
@@ -299,7 +301,9 @@
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 4px;
-        padding: 0 16px 16px;
+        padding: 16px;
+         border-radius: 12px;
+        border: 0.5px solid #d4d6da;
     }
 
     #calendar-dates div {
