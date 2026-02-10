@@ -10,8 +10,8 @@ class SubTaskController extends Controller
 {
 
 // create new subtask
-   public function store(Request $request, $id, \App\Services\AiTaskService $aiService)
-{          
+   public function store(Request $request, $id)
+{
     $validated = $request->validate([ // ->all();
         'title' => 'required|string|max:255', //key == name in form
         'description' => 'nullable|string',
@@ -22,21 +22,11 @@ class SubTaskController extends Controller
 
     $validated['task_id'] = $id;
 
-    //call ai
-     // $AIGeneratedPoints = $aiService->generatePointsViaAI($request);
-
-    
-    //and points 
-
-    //$validated['points'] = $AIGeneratedPoints;
-
-    
-
     SubTask::create($validated);
 
     $this->balancePoints($id);
 
-    return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    return redirect()->route('tasks.index')->with('success', 'Sub Task created successfully!');
 }
     
 
@@ -91,7 +81,7 @@ class SubTaskController extends Controller
 
     $this->balancePoints($parentTaskId);
 
-    return redirect()->route('tasks.index')->with('success', 'Subtask updated successfully!');
+    return redirect()->route('tasks.index')->with('success', 'Subtask deleted successfully!');
 
     }
 

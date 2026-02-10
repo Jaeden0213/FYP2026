@@ -954,6 +954,99 @@
         </div>
     </aside>
 
+    @if(session('success'))
+    <div id="toast-success" class="toast-container" onclick="dismissToast()">
+        <div class="toast-content">
+            <span class="toast-icon">✨</span>
+            <span class="toast-text">{{ session('success') }}</span>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 350px;
+            max-width: 90%;
+            background: #ffffff;
+            border-bottom: 5px solid #10b981;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 10000;
+            animation: dropIn 0.5s ease-out;
+            cursor: pointer; /* Indicates it's clickable */
+        }
+
+        .toast-content {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .toast-text { 
+            color: #1f2937; 
+            font-weight: 600; 
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .toast-progress {
+            height: 4px;
+            background: #10b981;
+            width: 100%;
+            animation: progress 7s linear forwards;
+        }
+
+        /* PAUSE ANIMATION ON HOVER */
+        .toast-container:hover .toast-progress {
+            animation-play-state: paused;
+        }
+
+        @keyframes dropIn {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+
+    <script>
+        // Store timeout ID to clear it if user clicks early
+        let toastTimeout;
+
+        function startToastTimer() {
+            toastTimeout = setTimeout(() => {
+                dismissToast();
+            }, 7000); // 7 seconds
+        }
+
+        function dismissToast() {
+            const toast = document.getElementById('toast-success');
+            if (toast) {
+                // Clear the automatic timer so it doesn't try to remove it twice
+                clearTimeout(toastTimeout);
+                
+                toast.style.transition = "all 0.3s ease";
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, -20px)";
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        // Start the timer when the page loads
+        startToastTimer();
+    </script>
+@endif
+
     <!-- Main Content Area -->
     <div class="main-content-area">
         <!-- Toolbar -->
@@ -974,6 +1067,8 @@
             </form>
             <button type="button" onclick="openCreateModal()">+ Add Task</button> 
         </div>
+
+       
 
         <!-- Main Content Wrapper -->
         <div class="main-content-wrapper">

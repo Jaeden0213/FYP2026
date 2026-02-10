@@ -11,16 +11,10 @@ class AiTaskController extends Controller
 {
     public function breakdownTask($id)
     {
-       
         $task = Task::findOrFail($id);
 
-       
-
         $subtasks = AiTaskService::generateSubtasks($task);
-      
-
-        
-
+  
         if (isset($subtasks['subtasks'])) {
          foreach ($subtasks['subtasks'] as $item) { 
         Subtask::create([
@@ -33,18 +27,10 @@ class AiTaskController extends Controller
         ]);
     }
     
-
-    //$task->update($totalPoints);
-
-
 }
 
-        
-
-   
-    
       // return $subtasks;
-      return redirect()->route('tasks.index')
+    return redirect()->route('tasks.index')
                          ->with('success', '✨ AI successfully broke down "' . $task->title . '" into subtasks!');
         
     }
