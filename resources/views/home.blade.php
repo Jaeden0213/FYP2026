@@ -507,7 +507,7 @@
 
     .subtask-toggle-btn {
         position: absolute;
-        left: -10px;
+        left: -15px;
         top: 50%;
         transform: translateY(-50%);
         background: white;
@@ -524,7 +524,8 @@
         font-size: 0.8rem;
         color: #6b7280;
         padding: 0;
-        margin: 0;
+        margin-top: 3px;
+        
         line-height: 1;
     }
 
@@ -541,12 +542,13 @@
         position: relative;
         overflow: hidden;
         transition: max-height 0.3s ease, opacity 0.3s ease;
+        
     }
 
     .subtasks-container:before {
         content: '';
         position: absolute;
-        left: -2px;
+        left: -px;
         top: 0;
         bottom: 0;
         width: 2px;
@@ -682,11 +684,12 @@
         background: rgba(0, 0, 0, 0.5);
         display: none;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         z-index: 9999;
-        padding: 20px;
+        padding: 40px 20px;
         overflow-y: auto;
         backdrop-filter: blur(4px);
+        
     }
 
     /* ===== Modal Box ===== */
@@ -698,7 +701,44 @@
         max-width: 500px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
     }
+
+    .modal-row {
+    display: flex;
+    gap: 15px; /* Space between the two inputs */
+    margin-bottom: 15px;
+}
+
+.input-group {
+    flex: 1; /* Makes inputs take up equal width in a row */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.input-group input, 
+.input-group select, 
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+/* Mobile: Stack them back up so they aren't too skinny */
+@media (max-width: 480px) {
+    .modal-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
 
     @keyframes modalSlideUp {
         from { 
@@ -960,6 +1000,9 @@
                         @forelse($tasks as $task)
                             <div class="task-row {{ $task->status === 'completed' ? 'completed' : '' }}" onclick='openEditModal(@json($task))'>
                                 <div class="task-main">
+                                     <span class="subtask-checkbox">
+                                        {{ $task->status === 'completed' ? '☑' : '☐' }}
+                                     </span>
                                     <div class="task-title">
                                         {{ $task->title }} 
                                         @if($task->status !== 'completed' 
@@ -970,6 +1013,12 @@
                                     </div>
                                     <div class="task-actions">
                                         <button type="button" onclick='event.stopPropagation(); openSubTaskCreateModal(@json($task))'>+ Sub Task</button> 
+                                        <form action="{{ route('AIgenerateSubtasks',  $task->id) }}" method="POST"
+                                             class="delete-form"  style="display: inline;">
+                                            @csrf
+                                            
+                                            <button type="submit" class="delete-btn" onclick="event.stopPropagation()">AI</button> 
+                                        </form>
                                         <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
                                              class="delete-form" onsubmit="return confirm('Delete this task?')" style="display: inline;">
                                             @csrf
@@ -981,6 +1030,7 @@
                                 
                                 <div class="task-meta">
                                     <span>📅 {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('M d') : 'No due date' }}</span>
+                                    <span>🏅 {{ $task->points ?? '0' }}</span>
                                 </div>
                                 
                                 @if($task->subtasks->count())
@@ -1057,7 +1107,7 @@
                                 <label>Filter Status</label>
                                 <select name="status" onchange="this.form.submit()">
                                     <option value="" {{ $statusFilter === null ? 'selected' : '' }}>Show All Tasks</option>
-                                    <option value="pending" {{ $statusFilter === 'pending' ? 'selected' : '' }}>⏳ Pending Tasks</option>
+                                    
                                     <option value="in_progress" {{ $statusFilter === 'in_progress' ? 'selected' : '' }}>⚙️ In Progress</option>
                                     <option value="completed" {{ $statusFilter === 'completed' ? 'selected' : '' }}>✅ Completed Tasks</option>
                                 </select>
@@ -1082,45 +1132,71 @@
     </div>
 </div>
 
-<!-- Modal (Hidden by default) -->
 <div id="taskModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
         <h2 id="modalTitle" class="modal-title">New Task</h2>
         <form id="taskForm" method="POST">
             @csrf
             <input type="hidden" id="formMethod" name="_method" value="POST">
-            <label>Title</label>
-            <input type="text" name="title" id="taskTitle" required>
-            <label>Description</label>
-            <textarea name="description" id="taskDescription"></textarea>
-            <label>Category</label>
-            <select name="category" id="taskType" required>
-                <option value="chores">Chores</option>
-                <option value="exercise">Exercise</option>
-                <option value="study">Study</option>
-                <option value="assignment">Assignment</option>
-            </select>
-            <label>Priority</label>
-            <select name="priority" id="taskPriority" required>
-                <option value="high">High</option>
-                <option value="medium" selected>Medium</option>
-                <option value="low">Low</option>
-            </select>
-            <label>Status</label>
+
+            <div class="input-group">
+                <label>Title</label>
+                <input type="text" name="title" id="taskTitle" required>
+            </div>
+
+            <div class="input-group">
+                <label>Description</label>
+                <textarea name="description" id="taskDescription" rows="2"></textarea>
+            </div>
+
+            <div class="modal-row">
+                <div class="input-group">
+                    <label>Category</label>
+                    <select name="category" id="taskType" required>
+                        <option value="chores">Chores</option>
+                        <option value="exercise">Exercise</option>
+                        <option value="study">Study</option>
+                        <option value="assignment">Assignment</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Priority</label>
+                    <select name="priority" id="taskPriority" required>
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-row">
+                <div class="input-group">
+                     <label>Status</label>
             <select name="status" id="taskStatus" required>
-                <option value="pending" selected>Pending</option>
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
             </select>
-            <label>Assignee</label>
-            <input type="text" name="assignee" id="taskAssignee">
-            <label>Due Date</label>
-            <input type="date" name="due_date" id="taskDueDate">
-            <label>Points</label>
-            <input type="number" name="points" id="taskPoints" min="0" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Points ★</label>
+                    <input type="text" name="points" id="taskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
+                </div>
+            </div>
+
+            <div class="modal-row">
+                <div class="input-group">
+                    <label>Assignee</label>
+                    <input type="text" name="assignee" id="taskAssignee">
+                </div>
+                <div class="input-group">
+                    <label>Due Date</label>
+                    <input type="date" name="due_date" id="taskDueDate">
+                </div>
+            </div>
+
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-submit">Save</button>
+                <button type="submit" class="btn-submit">Save Task</button>
             </div>
         </form>
     </div>
@@ -1139,10 +1215,16 @@
             <textarea name="description" id="subtaskDescription"></textarea>
             <label>Status</label>
             <select name="status" id="subtaskStatus" required>
-                <option value="pending" selected>Pending</option>
+                
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
             </select>
+
+
+            
+
+
+
             <label>Points</label>
             <input type="number" name="points" id="subtaskPoints" min="0" value="0">
             <div class="modal-actions">
@@ -1176,7 +1258,7 @@
             container.style.maxHeight = '0';
             container.style.opacity = '0';
             container.style.marginTop = '0';
-            toggleBtn.textContent = '▶';
+            toggleBtn.textContent = '▶'; 
         } else {
             // Show subtasks
             container.style.maxHeight = container.scrollHeight + 'px';
@@ -1210,12 +1292,14 @@
         // Clear fields
         document.getElementById("taskTitle").value = "";
         document.getElementById("taskAssignee").value = "";
-        document.getElementById("taskDueDate").value = "";
+        document.getElementById("taskDueDate").value="{{ now()->format('Y-m-d') }}"; 
         document.getElementById("taskPriority").value = "medium";
-        document.getElementById("taskStatus").value = "pending";
+        
         document.getElementById("taskDescription").value = "";
         document.getElementById("taskType").value = "chores";
-        document.getElementById("taskPoints").value = "0";
+        const pointsField = document.getElementById("taskPoints").value = "0";
+        const statusField = document.getElementById("taskStatus");
+        
 
         document.getElementById("taskModal").style.display = "flex";
     }
@@ -1250,7 +1334,7 @@
 
         // Clear fields
         document.getElementById("subtaskTitle").value = "";
-        document.getElementById("subtaskStatus").value = "pending";
+        
         document.getElementById("subtaskDescription").value = "";
         document.getElementById("subtaskPoints").value = "0";
 
@@ -1259,7 +1343,7 @@
 
     function openSubTaskEditModal(subtask) {
         document.getElementById("submodalTitle").innerText = "Edit Sub Task";
-        document.getElementById("subtaskForm").action = "/subtasks/" + subtask.id;
+        document.getElementById("subtaskForm").action = "/subtasks/" + subtask.id + "/" + subtask.task_id;
         document.getElementById("subtaskformMethod").value = "PUT";
 
         document.getElementById("subtaskTitle").value = subtask.title;

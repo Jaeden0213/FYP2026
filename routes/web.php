@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
 
     //SUBTASKS
     Route::post('/subtasks/{id}', [SubTaskController::class, 'store'])->name('subtasks.store');
-    Route::put('/subtasks/{id}', [SubTaskController::class, 'update'])->name('subtasks.update');
+    Route::put('/subtasks/{id}/{taskId}', [SubTaskController::class, 'update'])->name('subtasks.update');
     Route::delete('/subtasks/{id}', [SubTaskController::class, 'destroy'])->name('subtasks.destroy');
     });
 

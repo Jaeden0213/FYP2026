@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/ai/task-breakdown', [AiTaskController::class, 'breakdownTask']);
+Route::post('/ai/task-breakdown{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
 
 Route::post('/test', function () {
     return response()->json(['message' => 'It works!']);
