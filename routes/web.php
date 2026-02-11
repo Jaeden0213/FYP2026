@@ -9,6 +9,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AiTaskController; 
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,6 +54,12 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/store', [StoreController::class, 'index'])->name('store.index');
     Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
     Route::get('/store/pomodoro', function () {return view('store.pomodoro');})->name('store.pomodoro');
+
+    //NOTIFICATIONS
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
 });
 
 Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
@@ -122,6 +129,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
 });
+
 
 
 

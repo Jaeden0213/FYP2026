@@ -45,4 +45,4 @@ class TaskSeeder extends Seeder
     }
 }
 
-//run use  php artisan db:seed --class=TaskSeeder -jordon
+//run use  php artisan db:seed --class=TaskSeeder -jordon -ok

@@ -8,6 +8,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\GamificationService;
 use app\Http\Controllers\AiTaskController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TaskStatusMail;
+use App\Models\User;
+use App\Models\Notification;
 
 class TaskController extends Controller
 {
@@ -207,6 +211,7 @@ public function calendar(Request $request)
         
         // Find all subtasks belonging to this task and mark them as completed
         $task->subtasks()->update(['status' => 'completed']);
+
         
         // Optional: Trigger gamification points here if needed
         // need to update so the completed subtasks can get points too
@@ -228,13 +233,37 @@ public function calendar(Request $request)
 
 
 
-        $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id.
+            $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id.
+                // ✅ In-app notification ONLY when status changes to completed
+            if ($oldStatus !== 'completed' && $task->status === 'completed') {
+                Notification::create([
+                    'message' => 'Task completed: ' . $task->title,
+                    'notification_type' => 'task_completed',
+                    'sent_status' => false,
+                    'scheduled_time' => null,
+                    'user_id' => $task->user_id,
+                    'task_id' => $task->id,
+                ]);
+            }
+            // ✅ Send email ONLY when status changes to completed
+            if ($oldStatus !== 'completed' && $task->status === 'completed') {
 
-        if ($oldStatus !== 'completed' && $task->status === 'completed') {
-            $gamification->awardForTaskCompletion(auth()->user(), $task);
-        }
+                $user = User::find($task->user_id);
 
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+                if ($user && $user->email) {
+                    Mail::to($user->email)->send(
+                        new TaskStatusMail(
+                            $task,
+                            'Task Completed: ' . $task->title,
+                            'Great job! You have successfully completed this task.'
+                        )
+                    );
+                }
+
+                $gamification->awardForTaskCompletion(auth()->user(), $task);
+            }
+
+            return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
     // Delete task
