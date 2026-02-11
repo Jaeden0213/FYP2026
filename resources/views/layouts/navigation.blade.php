@@ -512,9 +512,9 @@
             <span class="text">Create</span>
         </a>
         
-        <a href="{{ route('tasks.index') }}" class="nav-icon {{ request()->routeIs('tasks.index') ? 'active' : '' }}">
+        <a href="{{ route('tasks.calendar') }}" class="nav-icon {{ request()->routeIs('tasks.calendar') ? 'active' : '' }}">
             <span class="icon">📋</span>
-            <span class="text">Tasks</span>
+            <span class="text">Calandar</span>
         </a>
         
     <a href="{{ route('store.index') }}" class="nav-icon {{ request()->routeIs('store.*') ? 'active' : '' }}">

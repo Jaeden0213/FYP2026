@@ -8,13 +8,14 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
-
+use App\Http\Controllers\AiTaskController; 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/home', [TaskController::class, 'index']);
+Route::post('/ai/task-breakdown{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
 
 
 // Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
@@ -29,16 +30,18 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     })->name('dashboard');
 
     
+    
 
     // TASKS
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index'); 
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    
 
     //SUBTASKS
     Route::post('/subtasks/{id}', [SubTaskController::class, 'store'])->name('subtasks.store');
-    Route::put('/subtasks/{id}', [SubTaskController::class, 'update'])->name('subtasks.update');
+    Route::put('/subtasks/{id}/{taskId}', [SubTaskController::class, 'update'])->name('subtasks.update');
     Route::delete('/subtasks/{id}', [SubTaskController::class, 'destroy'])->name('subtasks.destroy');
     });
 

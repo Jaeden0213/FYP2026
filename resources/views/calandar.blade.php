@@ -202,6 +202,7 @@
         display: flex;
         flex-direction: column;
         background: white;
+        
     }
 
     /* ===== Calendar Header ===== */
@@ -328,7 +329,7 @@
         border-right: 1px solid #e5e7eb;
         border-bottom: 1px solid #e5e7eb;
         padding: 8px;
-        min-height: 120px;
+        min-height: 260px;
         position: relative;
         background: white;
         transition: all 0.2s ease;
@@ -408,7 +409,7 @@
     }
 
     .day-tasks {
-        max-height: 80px;
+        max-height: 380px;
         overflow-y: auto;
     }
 
@@ -443,7 +444,7 @@
     }
 
     .calendar-task.low {
-        border-left-color: #10b981;
+        border-left-color: #10b935;
         background: #f0fdf4;
     }
 
@@ -560,6 +561,8 @@
         border-right: 1px solid #e5e7eb;
         position: relative;
         background: white;
+        height: 120px !important;
+        line-height: 1.5; /* Keeps the text at the top of the taller box */
     }
 
     .time-label {
@@ -575,6 +578,7 @@
         border-bottom: 1px solid #e5e7eb;
         position: relative;
         background: white;
+        height: 120px !important;
     }
 
     .week-day:last-child {
@@ -594,6 +598,9 @@
         white-space: nowrap;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         border-left: 3px solid;
+        z-index: 10;
+        outline: 1.5px solid rgba(0, 0, 0, 0.15); /* Suble dark outline */
+        outline-offset: -1px; /* Pulls it slightly inside for a cleaner look */
     }
 
     .week-task.high {
@@ -661,6 +668,8 @@
         font-size: 0.9rem;
         color: #6b7280;
         font-weight: 500;
+        height: 120px !important;
+        line-height: 1.5; /* Keeps the text at the top of the taller box */
     }
 
     .day-schedule {
@@ -671,7 +680,13 @@
         height: 60px;
         border-bottom: 1px solid #e5e7eb;
         position: relative;
+        height: 120px !important; /* Changed from 60px */
+        position: relative;
     }
+
+    #week-header {
+    padding-right: 15px; /* Manually match the average scrollbar width */
+}
 
     .day-task {
         position: absolute;
@@ -683,6 +698,13 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-left: 4px solid;
         overflow: hidden;
+       outline: 1.5px solid rgba(0, 0, 0, 0.15); /* Suble dark outline */
+    outline-offset: -1px; /* Pulls it slightly inside for a cleaner look */
+    }
+
+    .week-task:hover, .day-task:hover {
+    outline: 2px solid #2563eb; /* A nice blue outline on hover */
+    z-index: 1000; /* Bring it to the very front */
     }
 
     .day-task.high {
@@ -713,16 +735,18 @@
 
     /* ===== Modal Overlay ===== */
     .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        padding: 20px;
-        overflow-y: auto;
-        backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;         /* Use Flexbox to center */
+    justify-content: center;
+    align-items: flex-start; /* Start at the top... */
+    padding: 20px;         /* ...but give it some "breathing room" */
+    overflow-y: auto;      /* This allows the OVERLAY to scroll, not just the modal */
+    z-index: 1000;
     }
 
     /* ===== Modal Box ===== */
@@ -731,7 +755,7 @@
         border-radius: 16px;
         padding: 32px;
         width: 100%;
-        max-width: 500px;
+        max-width: 700px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -979,7 +1003,7 @@
             </div>
         </div>
 
-        <!-- Calendar View Container -->
+        <!-- Calendar View Container, week  --> 
         <div class="calendar-view-container">
             <!-- Calendar Header -->
             <div class="calendar-header">
@@ -993,7 +1017,7 @@
                 </div>
                 <div class="calendar-view-options">
                     <button id="month-view-btn" class="active">Month</button>
-                    <button id="week-view-btn">Week</button>
+                    <button id="week-view-btn" >Week</button>
                     <button id="day-view-btn">Day</button>
                 </div>
             </div>
@@ -1102,17 +1126,17 @@
 
 <script>
     // Calendar state
-    let currentDate = new Date();
+    let currentDate = new Date(); //return today's date
     let currentView = 'month'; // 'month', 'week', or 'day'
-    let allTasks = {!! json_encode($tasks) !!}; // Pass tasks from controller
+    let allTasks = {!! json_encode($tasks) !!}; // Pass tasks from controller, obj -> json 
 
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
         // Sidebar toggle
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = document.getElementById('sidebar'); // store ref of an object, so can sidebar.innerHTML, and other HTML obj attributes
         document.getElementById('sidebarToggle').addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
+            sidebar.classList.toggle('active'); // in ur css, active means pop up kinda
+        });// if active class is not there, add it, if its there, remove it. so no need if else
 
         // View toggle buttons
         document.getElementById('listViewToggle').addEventListener('click', function() {
@@ -1125,13 +1149,16 @@
 
         document.getElementById('listViewBtn').addEventListener('click', function(e) {
             e.preventDefault();
-            window.location.href = "{{ route('tasks.index') }}?view=list";
-        });
+            window.location.href = "{{ route('tasks.index') }}?view=list"; //view=list its a query param, neh the stuff in ur url ah in browser, so that it shows list, extra info
+        });// tis is basically accessing ur browser's url bar 
 
-        // Calendar navigation
+
+
+
+        // Calendar navigation of year, month
         document.getElementById('prev-year').addEventListener('click', () => {
-            currentDate.setFullYear(currentDate.getFullYear() - 1);
-            renderCalendar();
+            currentDate.setFullYear(currentDate.getFullYear() - 1); //2025, 4 digits year
+            renderCalendar(); //after a change in year, need to rerender the view
         });
 
         document.getElementById('prev-month').addEventListener('click', () => {
@@ -1153,6 +1180,9 @@
             currentDate = new Date();
             renderCalendar();
         });
+
+
+
 
         // View options
         document.getElementById('month-view-btn').addEventListener('click', () => {
@@ -1177,12 +1207,12 @@
         
         // Update button states
         document.querySelectorAll('.calendar-view-options button').forEach(btn => {
-            btn.classList.remove('active');
+            btn.classList.remove('active');// loop tru all buttons and remove active
         });
-        document.getElementById(`${view}-view-btn`).classList.add('active');
+        document.getElementById(`${view}-view-btn`).classList.add('active'); // watever view now, active that button so it lights up purple
         
         // Show/hide views
-        document.getElementById('month-view').style.display = view === 'month' ? 'flex' : 'none';
+        document.getElementById('month-view').style.display = view === 'month' ? 'flex' : 'none'; // is the current view === ? yes then flex (display), no the none
         document.getElementById('week-view').style.display = view === 'week' ? 'flex' : 'none';
         document.getElementById('day-view').style.display = view === 'day' ? 'flex' : 'none';
         
@@ -1205,27 +1235,44 @@
         const monthYearEl = document.getElementById('current-month-year');
         const monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"];
-        monthYearEl.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        monthYearEl.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`; // Feb 2026
+        //currentDate.getMonth() returns 0-11
         
         const monthDaysEl = document.getElementById('month-days');
         monthDaysEl.innerHTML = '';
         
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear(); //2026
+        const month = currentDate.getMonth(); //1 feb
         const today = new Date();
         
         // Get first day of month
         const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
+        const lastDay = new Date(year, month + 1, 0); // so im taking march, and 0, so its the last day of feb
         const daysInMonth = lastDay.getDate();
-        const startingDay = firstDay.getDay(); // 0 = Sunday
+        const startingDay = firstDay.getDay(); // 0 = Sunday 1 = mon
         
         // Create days
         let dayCount = 1;
+        
         for (let i = 0; i < 42; i++) { // 6 weeks * 7 days
             const dayEl = document.createElement('div');
             
-            if (i < startingDay || dayCount > daysInMonth) {
+                        if (i < startingDay) {
+                dayEl.classList.add('calendar-day', 'other-month');
+                
+                // The "Magic" Math: 
+                // We take the 1st of the current month and subtract 
+                // how many boxes we are away from it.
+                const prevMonthDate = new Date(year, month, i - startingDay + 1);
+                
+                dayEl.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-number">${prevMonthDate.getDate()}</div>
+                    </div>
+                `;
+                // NO dayCount++ here! We don't want to touch dayCount 
+                // until we reach the actual 1st of the month.
+            } else if(dayCount > daysInMonth) { // the 1s before and after a month, filler
                 // Previous or next month
                 dayEl.classList.add('calendar-day', 'other-month');
                 const otherMonthDate = new Date(year, month, dayCount - daysInMonth);
@@ -1234,10 +1281,12 @@
                         <div class="day-number">${otherMonthDate.getDate()}</div>
                     </div>
                 `;
-            } else {
+                dayCount++;
+            }
+            else {
                 // Current month
                 const dayDate = new Date(year, month, dayCount);
-                const isToday = dayDate.toDateString() === today.toDateString();
+                const isToday = dayDate.toDateString() === today.toDateString(); // just to make sure
                 const isSelected = false; // Add selection logic if needed
                 
                 dayEl.className = 'calendar-day';
@@ -1246,15 +1295,17 @@
                 
                 // Get tasks for this day
                 const dayTasks = getTasksForDate(dayDate);
-                const maxVisibleTasks = 3;
+                const maxVisibleTasks = 5;
+
+                
                 
                 dayEl.innerHTML = `
                     <div class="day-header">
                         <div class="day-number">${dayCount}</div>
-                        <button class="add-task-btn" onclick="openCreateModalForDate('${dayDate.toISOString().split('T')[0]}')">+</button>
+                        <button class="add-task-btn" onclick="openCreateModalForDate('${dayDate.toLocaleDateString('en-CA')}')">+</button>
                     </div>
                     <div class="day-tasks">
-                        ${dayTasks.slice(0, maxVisibleTasks).map(task => `
+                        ${dayTasks.slice(0, maxVisibleTasks).map(task => ` 
                             <div class="calendar-task ${task.priority} ${task.status === 'completed' ? 'completed' : ''}" 
                                  onclick="openEditModal(${JSON.stringify(task).replace(/"/g, '&quot;')})">
                                 <div class="task-title">${task.title}</div>
@@ -1278,78 +1329,92 @@
 
     // Render week view
     function renderWeekView() {
-        const monthYearEl = document.getElementById('current-month-year');
-        const today = new Date();
-        const weekStart = getWeekStart(currentDate);
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekEnd.getDate() + 6);
+    const monthYearEl = document.getElementById('current-month-year');
+    const today = new Date();
+    const weekStart = getWeekStart(new Date(currentDate)); // Cloned to prevent Sunday bug
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"];
+    
+    monthYearEl.textContent = `${weekStart.getDate()} ${monthNames[weekStart.getMonth()]} - 
+                              ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]} ${weekEnd.getFullYear()}`;
+    
+    // 1. Render week header
+    const weekHeaderEl = document.getElementById('week-header');
+    weekHeaderEl.innerHTML = '<div class="week-time-label">Time</div>';
+    
+    for (let i = 0; i < 7; i++) {
+        const dayDate = new Date(weekStart);
+        dayDate.setDate(dayDate.getDate() + i);
+        const isToday = dayDate.toDateString() === today.toDateString();
         
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"];
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'week-day-header';
+        if (isToday) dayHeader.classList.add('today');
         
-        monthYearEl.textContent = `${weekStart.getDate()} ${monthNames[weekStart.getMonth()]} - 
-                                  ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]} ${weekEnd.getFullYear()}`;
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        dayHeader.innerHTML = `
+            <div class="week-day-name">${dayNames[dayDate.getDay()]}</div>
+            <div class="week-day-date">${dayDate.getDate()}</div>
+        `;
+        weekHeaderEl.appendChild(dayHeader);
+    }
+    
+    // 2. Render time grid
+    const weekGridEl = document.getElementById('week-grid');
+    weekGridEl.innerHTML = '';
+    
+    for (let hour = 0; hour < 24; hour++) {
+        // Time label column
+        const timeLabel = document.createElement('div');
+        timeLabel.className = 'time-slot';
+        timeLabel.innerHTML = `<div class="time-label">${hour.toString().padStart(2, '0')}:00</div>`;
+        weekGridEl.appendChild(timeLabel);
         
-        // Render week header
-        const weekHeaderEl = document.getElementById('week-header');
-        weekHeaderEl.innerHTML = '<div class="week-time-label">Time</div>';
-        
-        for (let i = 0; i < 7; i++) {
+        // Day columns for this hour
+        for (let day = 0; day < 7; day++) {
             const dayDate = new Date(weekStart);
-            dayDate.setDate(dayDate.getDate() + i);
-            const isToday = dayDate.toDateString() === today.toDateString();
+            dayDate.setDate(dayDate.getDate() + day);
             
-            const dayHeader = document.createElement('div');
-            dayHeader.className = 'week-day-header';
-            if (isToday) dayHeader.classList.add('today');
+            const daySlot = document.createElement('div');
+            daySlot.className = 'week-day';
             
-            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            dayHeader.innerHTML = `
-                <div class="week-day-name">${dayNames[dayDate.getDay()]}</div>
-                <div class="week-day-date">${dayDate.getDate()}</div>
-            `;
-            weekHeaderEl.appendChild(dayHeader);
-        }
-        
-        // Render time grid
-        const weekGridEl = document.getElementById('week-grid');
-        weekGridEl.innerHTML = '';
-        
-        for (let hour = 0; hour < 24; hour++) {
-            // Time label
-            const timeLabel = document.createElement('div');
-            timeLabel.className = 'time-slot';
-            timeLabel.innerHTML = `<div class="time-label">${hour.toString().padStart(2, '0')}:00</div>`;
-            weekGridEl.appendChild(timeLabel);
+            // 3. Fetch and Render Tasks
+            const tasks = getTasksForDateAndHour(dayDate, hour);
+            tasks.forEach(task => {
+                const taskEl = document.createElement('div');
+                taskEl.className = `week-task ${task.priority}`;
+                
+                if (task.start_time && task.end_time) {
+                    const [startH, startM] = task.start_time.split(':').map(Number);
+                    const [endH, endM] = task.end_time.split(':').map(Number);
+                    const duration = ((endH * 60) + endM) - ((startH * 60) + startM);
+                    
+                    taskEl.style.top = `${startM * 2}px`;
+                    taskEl.style.height = `${duration > 0 ? (duration * 2) : 120}px`;
+                } else {
+                    taskEl.style.top = '2px';
+                    taskEl.style.height = '56px';
+                }
+                
+                taskEl.textContent = task.title;
+                taskEl.onclick = (e) => {
+                    e.stopPropagation();
+                    openEditModal(task);
+                };
+                daySlot.appendChild(taskEl);
+            });
             
-            // Day columns
-            for (let day = 0; day < 7; day++) {
-                const dayDate = new Date(weekStart);
-                dayDate.setDate(dayDate.getDate() + day);
-                dayDate.setHours(hour, 0, 0, 0);
-                
-                const daySlot = document.createElement('div');
-                daySlot.className = 'week-day';
-                
-                // Add tasks for this time slot
-                const tasks = getTasksForDateAndHour(dayDate, hour);
-                tasks.forEach(task => {
-                    const taskEl = document.createElement('div');
-                    taskEl.className = `week-task ${task.priority}`;
-                    taskEl.style.top = '4px';
-                    taskEl.style.height = '52px';
-                    taskEl.textContent = task.title;
-                    taskEl.onclick = () => openEditModal(task);
-                    daySlot.appendChild(taskEl);
-                });
-                
-                weekGridEl.appendChild(daySlot);
-            }
+            weekGridEl.appendChild(daySlot);
         }
     }
+}
 
     // Render day view
     function renderDayView() {
+        let currentDate = new Date();
         const dayTitleEl = document.getElementById('day-title');
         const daySubtitleEl = document.getElementById('day-subtitle');
         const dayGridEl = document.getElementById('day-grid');
@@ -1389,23 +1454,37 @@
         // Add tasks to schedule
         const dayTasks = getTasksForDate(currentDate);
         dayTasks.forEach(task => {
-            if (task.start_time) {
-                const [hour, minute] = task.start_time.split(':').map(Number);
-                const hourSlot = document.getElementById(`hour-${hour}`);
-                if (hourSlot) {
-                    const taskEl = document.createElement('div');
-                    taskEl.className = `day-task ${task.priority}`;
-                    taskEl.style.top = `${(minute / 60) * 60}px`;
-                    taskEl.style.height = '60px';
-                    taskEl.innerHTML = `
-                        <div class="day-task-title">${task.title}</div>
-                        <div class="day-task-time">${task.start_time}${task.end_time ? ` - ${task.end_time}` : ''}</div>
-                    `;
-                    taskEl.onclick = () => openEditModal(task);
-                    hourSlot.appendChild(taskEl);
-                }
-            }
-        });
+    if (task.start_time && task.end_time) {
+        const [startH, startM] = task.start_time.split(':').map(Number);
+        const [endH, endM] = task.end_time.split(':').map(Number);
+
+        // 1. Calculate duration in minutes
+        const startTotalMinutes = (startH * 60) + startM;
+        const endTotalMinutes = (endH * 60) + endM;
+        const durationMinutes = endTotalMinutes - startTotalMinutes;
+
+        const hourSlot = document.getElementById(`hour-${startH}`);
+        if (hourSlot && durationMinutes > 0) {
+            const taskEl = document.createElement('div');
+            taskEl.className = `day-task ${task.priority}`;
+            
+            // 2. Position it based on the start minute
+            taskEl.style.top = `${startM * 2}px`; 
+            
+            // 3. Stretch it based on the duration
+            // If 1 hour = 60px height, then height = durationMinutes
+            taskEl.style.height = `${durationMinutes * 2}px`;
+            
+            taskEl.innerHTML = `
+                <div class="day-task-title">${task.title}</div>
+                <div class="day-task-time">${task.start_time} - ${task.end_time}</div>
+            `;
+            
+            taskEl.onclick = () => openEditModal(task);
+            hourSlot.appendChild(taskEl);
+        }
+    }
+});
     }
 
     // Helper functions
@@ -1464,6 +1543,7 @@
     }
 
     function openEditModal(task) {
+        
         document.getElementById("modalTitle").innerText = "Edit Task";
         document.getElementById("taskForm").action = "/tasks/" + task.id;
         document.getElementById("formMethod").value = "PUT";

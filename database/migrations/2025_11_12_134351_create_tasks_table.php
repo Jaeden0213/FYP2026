@@ -23,6 +23,8 @@ return new class extends Migration
         $table->date('due_date')->nullable();
         $table->integer('points')->default(0);
         $table->timestamps();
+        $table->time('start_time')->nullable();
+        $table->time('end_time')->nullable();
     });
 }
 

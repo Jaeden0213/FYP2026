@@ -7,7 +7,7 @@ use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\GamificationService;
-
+use app\Http\Controllers\AiTaskController;
 
 class TaskController extends Controller
 {
@@ -143,7 +143,7 @@ public function calendar(Request $request)
 
   
     // create new task
-   public function store(Request $request)
+   public function store(Request $request, \App\Services\AiTaskService $aiService)
 {
 
              
@@ -157,11 +157,19 @@ public function calendar(Request $request)
         'assignee' => 'nullable|string|max:255',
         'due_date' => 'nullable|date',
         'points' => 'nullable|integer|min:0',
+        'start_time' => 'nullable', // Ensure these are validated
+        'end_time' => 'nullable',
     ]);
 
     $validated['user_id'] = auth()->id();
 
+    //call ai
+      $AIGeneratedPoints = $aiService->generateTaskPointsViaAI($request);
+
     
+    //and points 
+
+    $validated['points'] = $AIGeneratedPoints;
 
 
     
@@ -187,12 +195,40 @@ public function calendar(Request $request)
             'assignee' => 'nullable|string|max:255',
             'due_date' => 'nullable|date',
             'points' => 'nullable|integer|min:0',
+            'start_time' => 'nullable', // Ensure these are validated
+            'end_time' => 'nullable',
         ]);
 
         $task = Task::findOrFail($id);
         $oldStatus = $task->status;
 
-        $task->update($validated); // no need user_id?
+       // if task is comepleted, make all sub task comepleted too
+    if ($oldStatus !== 'completed' && $validated['status'] === 'completed') {
+        
+        // Find all subtasks belonging to this task and mark them as completed
+        $task->subtasks()->update(['status' => 'completed']);
+        
+        // Optional: Trigger gamification points here if needed
+        // need to update so the completed subtasks can get points too
+    }
+
+    // Get all its subtasks
+    $subtasks = $task->subtasks;
+
+    // 
+    $allFinished = $subtasks->every(function ($subtask) { //every() returns true only when everyone meets criteria 
+        return $subtask->status === 'completed'; // criteria
+    });
+
+    // 
+    if ($allFinished) {
+        $task->update(['status' => 'completed']);
+    }
+
+
+
+
+        $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id.
 
         if ($oldStatus !== 'completed' && $task->status === 'completed') {
             $gamification->awardForTaskCompletion(auth()->user(), $task);
