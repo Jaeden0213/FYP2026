@@ -1015,6 +1015,7 @@
     }
 </style>
 
+
 <div class="app-container">
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar">
@@ -1182,11 +1183,6 @@
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
                 <button type="submit" class="btn-submit">Save</button>
             </div>
-
-           
-
-          
-    
         </form>
     </div>
 </div>
@@ -1364,7 +1360,7 @@
                 const dayTasks = getTasksForDate(dayDate);
                 const maxVisibleTasks = 5;
 
-
+                
                 
                 dayEl.innerHTML = `
                     <div class="day-header">
@@ -1455,42 +1451,29 @@
             // 3. Fetch and Render Tasks
             const tasks = getTasksForDateAndHour(dayDate, hour);
             tasks.forEach(task => {
-            const taskEl = document.createElement('div');
-            // Add 'completed' class if task.completed is true/1
-            const completedClass = (task.completed == true || task.completed == 1) ? 'completed' : '';
-            taskEl.className = `week-task ${task.priority} ${completedClass}`;
-            
-            if (task.start_time && task.end_time) {
-                const [startH, startM] = task.start_time.split(':').map(Number);
-                const [endH, endM] = task.end_time.split(':').map(Number);
-                const duration = ((endH * 60) + endM) - ((startH * 60) + startM);
+                const taskEl = document.createElement('div');
+                taskEl.className = `week-task ${task.priority}`;
                 
-                taskEl.style.top = `${startM * 2}px`;
-                taskEl.style.height = `${duration > 0 ? (duration * 2) : 112}px`; // 112 to leave a tiny gap
-            }
-
-           
-
-            if (task.status === "completed") 
-            taskEl.classList.add('completed');
-
-            // Use innerHTML instead of textContent so we can add the time div
-            taskEl.innerHTML = `
-                <div class="week-task-title">${task.title}</div>
-                <div class="week-task-time" style="font-size: 0.7rem; opacity: 0.8;">
-                    ${task.start_time}- ${task.end_time}
-                </div>
-            `;
-
-            
-
-            taskEl.onclick = (e) => {
-                e.stopPropagation();
-                openEditModal(task);
-            };
-            daySlot.appendChild(taskEl);
-        });
+                if (task.start_time && task.end_time) {
+                    const [startH, startM] = task.start_time.split(':').map(Number);
+                    const [endH, endM] = task.end_time.split(':').map(Number);
+                    const duration = ((endH * 60) + endM) - ((startH * 60) + startM);
                     
+                    taskEl.style.top = `${startM * 2}px`;
+                    taskEl.style.height = `${duration > 0 ? (duration * 2) : 120}px`;
+                } else {
+                    taskEl.style.top = '2px';
+                    taskEl.style.height = '56px';
+                }
+                
+                taskEl.textContent = task.title;
+                taskEl.onclick = (e) => {
+                    e.stopPropagation();
+                    openEditModal(task);
+                };
+                daySlot.appendChild(taskEl);
+            });
+            
             weekGridEl.appendChild(daySlot);
         }
     }
@@ -1558,10 +1541,6 @@
             // 3. Stretch it based on the duration
             // If 1 hour = 60px height, then height = durationMinutes
             taskEl.style.height = `${durationMinutes * 2}px`;
-
-            if (task.status === "completed") {
-            taskEl.classList.add('completed');
-}
             
             taskEl.innerHTML = `
                 <div class="day-task-title">${task.title}</div>
@@ -1636,8 +1615,6 @@
         document.getElementById("taskForm").action = "/tasks/" + task.id;
         document.getElementById("formMethod").value = "PUT";
         document.getElementById("selectedDate").value = task.due_date || "";
-
-        
 
         // Fill fields
         document.getElementById("taskTitle").value = task.title || "";

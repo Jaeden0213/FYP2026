@@ -212,8 +212,8 @@ public function calendar(Request $request)
 
 
 
-            $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id.
-                // ✅ In-app notification ONLY when status changes to completed
+            $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id. ok
+                // In-app notification ONLY when status changes to completed //try async
             if ($oldStatus !== 'completed' && $task->status === 'completed') {
                 Notification::create([
                     'message' => 'Task completed: ' . $task->title,
@@ -224,8 +224,8 @@ public function calendar(Request $request)
                     'task_id' => $task->id,
                 ]);
             }
-            // ✅ Send email ONLY when status changes to completed
-        if ($oldStatus !== 'completed' && $task->status === 'completed') {
+            //  Send email ONLY when status changes to completed
+            if ($oldStatus !== 'completed' && $task->status === 'completed') {
 
                 $user = User::find($task->user_id);
 
