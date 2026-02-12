@@ -14,30 +14,7 @@ class TaskController extends Controller
     
 
 
-    public function index1(Request $request)
-{
-    $userId = auth()->id();
-
-    $date = $request->query('date', Carbon::today()->toDateString()); 
-    // Group tasks dynamically by priority
-    $tasksByPriority = Task::where('user_id', $userId)->whereDate('created_at', $date) // Task is a modal, bcos of eloquent, it knows/finds table called tasks
-    ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')") // order by priority, high to low
-    ->get()
-    ->groupBy('priority'); // make them a key value pair, key is priority
-
-    // after get() (eloquent), already from high to low
-    // $tasks = collect([ Task{id:1, ...}, Task{id:2, ...}, Task{id:3, ...}]);
-
-    //before get(sql) returns id => 1, ...
-
-
-    // 'high' => [ Task 1, Task 5,]
-
-    
    
-
-    return view('home', compact('tasksByPriority'));
-}
 
 public function index(Request $request)
 {

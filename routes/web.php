@@ -38,6 +38,7 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    //Route::get('/api/tasks', [TaskController::class, 'getTasks']);
 
     //SUBTASKS
     Route::post('/subtasks/{id}', [SubTaskController::class, 'store'])->name('subtasks.store');
