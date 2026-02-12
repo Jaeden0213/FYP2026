@@ -1183,13 +1183,10 @@
                 <button type="submit" class="btn-submit">Save</button>
             </div>
 
-            <form id="deleteForm" method="POST" style="display:none;">
-                @csrf
-                @method('DELETE')
-            </form>
+           
 
           
-    </form>
+    
         </form>
     </div>
 </div>
