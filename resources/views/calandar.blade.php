@@ -1161,7 +1161,7 @@
             
             <label>Status</label>
             <select name="status" id="taskStatus" required>
-                <option value="pending" selected>Pending</option>
+
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
             </select>
@@ -1400,8 +1400,8 @@
     // Render week view
     async function renderWeekView() {
 
-    const response = await fetch('/api/tasks'); // Your controller route
-    const databaseTasks = await response.json();
+   //const response = await fetch('/api/tasks'); 
+    //const databaseTasks = await response.json();
 
     const monthYearEl = document.getElementById('current-month-year');
     const today = new Date();

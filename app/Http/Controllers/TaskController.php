@@ -15,6 +15,8 @@ use App\Models\Notification;
 
 class TaskController extends Controller
 {
+
+
     
 
 
@@ -146,8 +148,8 @@ public function calendar(Request $request)
 
     //call ai
       $AIGeneratedPoints = $aiService->generateTaskPointsViaAI($request);
-
     
+
     //and points 
 
     $validated['points'] = $AIGeneratedPoints;
@@ -223,7 +225,7 @@ public function calendar(Request $request)
                 ]);
             }
             // ✅ Send email ONLY when status changes to completed
-            if ($oldStatus !== 'completed' && $task->status === 'completed') {
+        if ($oldStatus !== 'completed' && $task->status === 'completed') {
 
                 $user = User::find($task->user_id);
 
@@ -237,10 +239,10 @@ public function calendar(Request $request)
                     );
                 }
 
-                $gamification->awardForTaskCompletion(auth()->user(), $task);
-            }
+            $gamification->awardForTaskCompletion(auth()->user(), $task);
+        }
 
-            return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+        return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
     // Delete task
