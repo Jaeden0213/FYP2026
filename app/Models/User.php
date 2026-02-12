@@ -63,6 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return (int) $this->points()->sum('points_value'); // MUST match your DB column
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(\App\Models\Notification::class, 'user_id');
+    }
 
     public function level(): int
     {

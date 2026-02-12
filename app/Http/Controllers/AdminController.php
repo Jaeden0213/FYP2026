@@ -170,31 +170,51 @@ public function promoteUser($id){
         return view('admin.adminAddReward'); // create this blade file
     }
 
-    public function rewardsStore(Request $request)
+        public function rewardsStore(Request $request)
     {
+        // ✅ 1) Validate input
+        // If validation fails:
+        // - normal request => redirect back with errors
+        // - AJAX request (expectsJson) => returns 422 with JSON errors
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'brand' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
+            'brand'       => 'required|string|max:255',
             'points_cost' => 'required|integer|min:1',
-            'stock' => 'nullable|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
             'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048', // ✅ add this
+            'is_active'   => 'nullable|boolean',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // ✅ store image BEFORE create()
+        // ✅ 2) If image is uploaded, store it in /storage/app/public/rewards
+        // and save path into DB (image_path)
         if ($request->hasFile('image')) {
             $validated['image_path'] = $request->file('image')->store('rewards', 'public');
         }
 
+        // ✅ 3) Checkbox handling:
+        // If checked => true, if not checked => false
         $validated['is_active'] = $request->boolean('is_active');
 
-        StoreItem::create($validated);
+        // ✅ 4) Create reward item
+        $item = StoreItem::create($validated);
 
+        // ✅ 5) If request is AJAX, return JSON instead of redirect
+        // Our JS sends: Accept: application/json
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message'  => 'Reward added successfully!',
+                'redirect' => route('admin.rewards.index'),
+                'item'     => $item, // optional: can use if you want dynamic UI update
+            ]);
+        }
+
+        // ✅ 6) Normal fallback (non-AJAX submit)
         return redirect()
             ->route('admin.rewards.index')
             ->with('success', 'Reward added successfully!');
     }
+
 
     public function rewardsEdit(StoreItem $item)
     {
@@ -202,30 +222,38 @@ public function promoteUser($id){
     }
 
     public function rewardsUpdate(Request $request, $id)
-    {
-        $item = StoreItem::findOrFail($id);
+{
+    $item = StoreItem::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'brand' => 'required|string|max:255',
-            'points_cost' => 'required|integer|min:1',
-            'stock' => 'nullable|integer|min:0',
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'brand' => 'required|string|max:255',
+        'points_cost' => 'required|integer|min:1',
+        'stock' => 'nullable|integer|min:0',
+        'description' => 'nullable|string',
+        'is_active' => 'nullable|boolean',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
 
-        $validated['is_active'] = $request->boolean('is_active');
+    $validated['is_active'] = $request->boolean('is_active');
 
-        if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')->store('rewards', 'public');
-        }
-
-        $item->update($validated);
-
-        return redirect()->route('admin.rewards.index')->with('success', 'Reward updated!');
+    if ($request->hasFile('image')) {
+        $validated['image_path'] = $request->file('image')->store('rewards', 'public');
     }
 
+    $item->update($validated);
+
+    // ✅ If AJAX, return JSON
+    if ($request->expectsJson()) {
+        return response()->json([
+            'message'  => 'Reward updated successfully!',
+            'redirect' => route('admin.rewards.index'),
+            'item'     => $item,
+        ]);
+    }
+
+    return redirect()->route('admin.rewards.index')->with('success', 'Reward updated!');
+}
     public function rewardsDestroy(StoreItem $item)
     {
         $item->delete();

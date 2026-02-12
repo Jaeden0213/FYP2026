@@ -1038,6 +1038,11 @@
                 <span class="sidebar-text">List View</span>
                 <span class="icon-tooltip">List View</span>
             </a>
+            <a href="{{ route('notifications.index') }}">
+                <span class="sidebar-icon">🔔</span>
+                <span class="sidebar-text">Notifications</span>
+                <span class="icon-tooltip">Notifications</span>
+            </a>
             <a href="#">
                 <span class="sidebar-icon">⚙️</span>
                 <span class="sidebar-text">Settings</span>

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Subtask;
+use App\Models\Task;
 
 class SubTaskController extends Controller
 {
 
-// create new task
+// create new subtask
    public function store(Request $request, $id)
-{          
+{
     $validated = $request->validate([ // ->all();
         'title' => 'required|string|max:255', //key == name in form
         'description' => 'nullable|string',
@@ -23,17 +24,48 @@ class SubTaskController extends Controller
 
     SubTask::create($validated);
 
-    return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    $this->balancePoints($id);
+
+    return redirect()->route('tasks.index')->with('success', 'Sub Task created successfully!');
 }
     
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $taskId)
     {
 
     $subtask = SubTask::findorfail($id);
+    $task = Task::findOrFail($taskId);
+
+     $subtask->update($request->all());
 
 
-    $subtask->update($request->all());
+    // Get all its subtasks
+    $subtasks = $task->subtasks;
+
+    
+    // check if all subtasks are comp
+    $allFinished = $subtasks->every(function ($subtask) { //every() returns true only when everyone meets criteria 
+        return $subtask->status === 'completed'; // criteria
+    });
+
+    // if all comp, comp the task
+    if ($allFinished) {
+        $task->update(['status' => 'completed']);
+    }
+
+
+    
+    $notAllFinished = $subtasks->every(function ($subtask) { //every() returns true only when everyone meets criteria 
+        return $subtask->status === 'completed'; // criteria
+    });
+
+    if (!$notAllFinished) {
+        $task->update(['status' => 'in_progress']);
+    }
+
+
+
+   
 
     return redirect()->route('tasks.index')->with('success', 'Subtask updated successfully!');
 
@@ -43,9 +75,27 @@ class SubTaskController extends Controller
 
     
     $subtask = SubTask::findorfail($id);
+    $parentTaskId = $subtask->task_id;
+
     $subtask->delete();
 
-    return redirect()->route('tasks.index')->with('success', 'Subtask updated successfully!');
+    $this->balancePoints($parentTaskId);
+
+    return redirect()->route('tasks.index')->with('success', 'Subtask deleted successfully!');
 
     }
+
+    public function balancePoints($taskId)
+{
+    $task = Task::with('subtasks')->find($taskId);
+    $count = $task->subtasks->count();
+
+    if ($count > 0) {
+        // Simple division
+        $pointsPerSubtask = $task->points / $count;
+
+        // Update all subtasks for this task at once
+        $task->subtasks()->update(['points' => $pointsPerSubtask]);
+    }
+}
 }

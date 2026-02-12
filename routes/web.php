@@ -9,14 +9,14 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AiTaskController; 
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/home', [TaskController::class, 'index']);
-//Route::post('/ai/task-breakdown', [AiTaskController::class, 'breakdownTask']);
-
+Route::post('/ai/task-breakdown{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
 
 
 // Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
@@ -38,11 +38,11 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-    //Route::get('/api/tasks', [TaskController::class, 'getTasks']);
+    
 
     //SUBTASKS
     Route::post('/subtasks/{id}', [SubTaskController::class, 'store'])->name('subtasks.store');
-    Route::put('/subtasks/{id}', [SubTaskController::class, 'update'])->name('subtasks.update');
+    Route::put('/subtasks/{id}/{taskId}', [SubTaskController::class, 'update'])->name('subtasks.update');
     Route::delete('/subtasks/{id}', [SubTaskController::class, 'destroy'])->name('subtasks.destroy');
     });
 
@@ -54,6 +54,12 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/store', [StoreController::class, 'index'])->name('store.index');
     Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
     Route::get('/store/pomodoro', function () {return view('store.pomodoro');})->name('store.pomodoro');
+
+    //NOTIFICATIONS
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
 });
 
 Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
@@ -123,6 +129,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
 });
+
 
 
 
