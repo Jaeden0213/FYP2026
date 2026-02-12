@@ -433,24 +433,38 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
-    .calendar-task.high {
-        border-left-color: #ef4444;
-        background: #fef2f2;
-    }
+    /* High Priority - Darker Red */
+.calendar-task.high {
+    border-left: 4px solid #b91c1c; /* Deep Red */
+    background: #fee2e2;            /* Stronger Soft Red */
+    color: #7f1d1d;                 /* Dark Red Text for contrast */
+}
 
-    .calendar-task.medium {
-        border-left-color: #f59e0b;
-        background: #fffbeb;
-    }
+/* Medium Priority - Richer Amber/Orange */
+.calendar-task.medium {
+    border-left: 4px solid #d97706; /* Rich Amber */
+    background: #fef3c7;            /* Stronger Soft Orange */
+    color: #78350f;                 /* Dark Brown/Orange Text */
+}
 
-    .calendar-task.low {
-        border-left-color: #10b935;
-        background: #f0fdf4;
-    }
+/* Low Priority - Forest Green */
+.calendar-task.low {
+    border-left: 4px solid #15803d; /* Forest Green */
+    background: #dcfce7;            /* Stronger Soft Green */
+    color: #14532d;                 /* Deep Green Text */
+}
 
-    .calendar-task.completed {
-        opacity: 0.6;
-        text-decoration: line-through;
+/* Add a hover effect to make them pop even more */
+.calendar-task:hover {
+    filter: brightness(0.95); /* Slightly darkens the whole block on hover */
+}
+
+    .day-task.completed, .calendar-task.completed { 
+       opacity: 0.6 !important;
+    text-decoration: line-through;
+    background-color: #f3f4f6 !important; /* Light gray */
+    border-left-color: #9ca3af !important;
+    color: #6b7280 !important;
     }
 
     .task-title {
@@ -603,20 +617,58 @@
         outline-offset: -1px; /* Pulls it slightly inside for a cleaner look */
     }
 
-    .week-task.high {
-        border-left-color: #ef4444;
-        background: #fef2f2;
-    }
+    /* High Priority - Darker Red */
+.week-task.high {
+    border-left: 4px solid #b91c1c; /* Deep Red */
+    background: #fee2e2;            /* Stronger Soft Red */
+    color: #7f1d1d;                 /* Dark Red Text for contrast */
+}
 
-    .week-task.medium {
-        border-left-color: #f59e0b;
-        background: #fffbeb;
-    }
+/* Medium Priority - Richer Amber/Orange */
+.week-task.medium {
+    border-left: 4px solid #d97706; /* Rich Amber */
+    background: #fef3c7;            /* Stronger Soft Orange */
+    color: #78350f;                 /* Dark Brown/Orange Text */
+}
 
-    .week-task.low {
-        border-left-color: #10b981;
-        background: #f0fdf4;
-    }
+/* Low Priority - Forest Green */
+.week-task.low {
+    border-left: 4px solid #15803d; /* Forest Green */
+    background: #dcfce7;            /* Stronger Soft Green */
+    color: #14532d;                 /* Deep Green Text */
+}
+
+/* Add a hover effect to make them pop even more */
+.week-task:hover {
+    filter: brightness(0.95); /* Slightly darkens the whole block on hover */
+}
+
+    .week-task.completed ,.day-task.completed, .day-tasks.completed {
+    opacity: 0.6 !important;
+    text-decoration: line-through;
+    background-color: #f3f4f6 !important; /* Light gray */
+    border-left-color: #9ca3af !important;
+    color: #6b7280 !important;
+
+    z-index: 5; 
+    pointer-events: auto; /* Ensures you can still click/hover it */
+    
+}
+
+/* Ensure the title inside also looks done */
+.week-task.completed .week-task-title {
+    text-decoration: line-through;
+}
+
+/* Fix the double comma and selector error here */
+.week-task-time, 
+.day-task.completed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    
 
     /* ===== Day View ===== */
     .day-view {
@@ -700,11 +752,16 @@
         overflow: hidden;
        outline: 1.5px solid rgba(0, 0, 0, 0.15); /* Suble dark outline */
     outline-offset: -1px; /* Pulls it slightly inside for a cleaner look */
+    transition: all 0.2s ease;
+    z-index: 1;
+    pointer-events: auto; /* Make sure it can be clicked */
     }
 
     .week-task:hover, .day-task:hover {
-    outline: 2px solid #2563eb; /* A nice blue outline on hover */
-    z-index: 1000; /* Bring it to the very front */
+    z-index: 100 !important;
+    transform: scale(1.02); /* Makes it slightly bigger */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
     }
 
     .day-task.high {
@@ -957,6 +1014,7 @@
         }
     }
 </style>
+
 
 <div class="app-container">
     <!-- Sidebar -->
