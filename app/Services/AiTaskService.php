@@ -7,29 +7,64 @@ use Illuminate\Http\Request;
 
 class AiTaskService
 {
-    public static function generateSubtasks(Task $task)//: array
+    public static function generateSubtasks(Task $task , $existingSubtasks = [])//: array
     {
-        $prompt = "
-        Break the following task into 3- 5 clear actionable subtasks with title description, priority and 
-        for points assign a 'weight' (a decimal between 0.1 and 0.9) 
-        representing its complexity. 
-        The SUM of all weights must equal exactly 1.0. :
+       
 
-        Title: {$task->title}
+        // Turn existing subtasks into a string so the AI can see them
+    $currentList = collect($existingSubtasks)->map(function($s) use ($task) { 
+    return "- {$s->title} (Previous Weight: " . ($s->points / ($task->points ?: 1)) . ")";
+})->implode("\n");
+
+    $prompt = "
+        Main Task: {$task->title}
         Description: {$task->description}
+
+        Existing Subtasks:
+        {$currentList}
+
+        INSTRUCTION:
+        1. Break the task into 3-5 clear actionable subtasks.
+        2. If I provided 'Existing Subtasks' above, INCLUDE them in your response but you may refine their titles/descriptions.
+        3. Add new subtasks if necessary to reach the 3-5 range.
+        4. For each subtask, assign a 'weight' (decimal between 0.1 and 0.9).
+        5. The SUM of ALL weights in your response must equal exactly 1.0.
 
         Respond ONLY in JSON:
         {
-          \"subtasks\": [\"subtask 1\", \"subtask 2\"]
+          \"subtasks\": [
+            {
+              \"title\": \"Subtask Title\",
+              \"description\": \"Subtask Description\",
+              \"priority\": \"high/medium/low\",
+              \"weight\": 0.3
+            }
+          ]
         }
         ";
 
+        // $prompt = "
+        //Break the following task into 3- 5 clear actionable subtasks with title description, priority and 
+        //for points assign a 'weight' (a decimal between 0.1 and 0.9) 
+        //representing its complexity. 
+        //The SUM of all weights must equal exactly 1.0. :
+
+       // Title: {$task->title}
+       // Description: {$task->description}
+
+       // Respond ONLY in JSON:
+       // {
+      //    \"subtasks\": [\"subtask 1\", \"subtask 2\"]
+       // }
+       // ";
+
+    return OpenAiClient::ask($prompt);
+
         $response = OpenAiClient::ask($prompt); //returned as array o
 
-        //return $response['subtasks'] ?? [];
+        
 
-          // Send the full array to Postman
-    //return response()->json($response); //arr -> json
+          
     return $response;
     }
 

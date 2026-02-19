@@ -1,4 +1,5 @@
 <x-app-layout>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     body, html {
         margin: 0;
@@ -1113,12 +1114,12 @@
                                     </div>
                                     <div class="task-actions">
                                         <button type="button" onclick='event.stopPropagation(); openSubTaskCreateModal(@json($task))'>+ Sub Task</button> 
-                                        <form action="{{ route('AIgenerateSubtasks',  $task->id) }}" method="POST"
-                                             class="delete-form"  style="display: inline;">
+                                        <form id="ai-form" class="delete-form"  style="display: inline;">
                                             @csrf
                                             
-                                            <button type="submit" class="delete-btn" onclick="event.stopPropagation()">AI</button> 
+                                            <button type="button" class="delete-btn" onclick="event.stopPropagation(); handleAiClick({{ $task->id }})">AI</button> 
                                         </form>
+                                        <div id="status-msg"></div> ```
                                         <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
                                              class="delete-form" onsubmit="return confirm('Delete this task?')" style="display: inline;">
                                             @csrf
@@ -1133,10 +1134,11 @@
                                     <span>🏅 {{ $task->points ?? '0' }}</span>
                                 </div>
                                 
-                                @if($task->subtasks->count())
+                                
                                     <div class="subtasks-wrapper">
                                         <button class="subtask-toggle-btn" onclick="toggleSubtasks(event, {{ $task->id }})">▼</button>
-                                        <div class="subtasks-container" id="subtasks-{{ $task->id }}">
+                                        <div class="subtasks-container" id="subtask-container-{{ $task->id }}">
+                                            @if($task->subtasks->count())
                                             @foreach($task->subtasks as $subtask) 
                                                 <div class="subtask-row {{ $subtask->status === 'completed' ? 'completed' : '' }}" onclick='event.stopPropagation(); openSubTaskEditModal(@json($subtask))'>
                                                     <span class="subtask-checkbox">
@@ -1336,6 +1338,107 @@
 </div>
 
 <script>
+
+    async function handleAiClick(taskId) {
+        // 1. Prevent the page from freezing/reloading
+        document.getElementById('status-msg').innerText = "AI is thinking...";
+
+        // 2. Call the Controller in the background (AJAX)
+        // We don't await the AI to finish, we just trigger the start
+        fetch(`ai/task-breakdown/${taskId}`, { 
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            }
+        });
+
+        
+
+        // 3. Start the Heartbeat immediately!
+        // Since we didn't reload, this timer will actually live!
+        waitForAI(taskId);
+    }
+    
+    function waitForAI(taskId) {
+    // 1. Tell the user we are waiting
+    document.getElementById('status-msg').innerText = "AI is thinking...";
+
+    // 2. Start a 'Heartbeat' (Interval)
+    const checkTimer = setInterval(async () => {
+        console.log("Checking for data..."); // STEP 1
+        
+        // 3. Call that "Weird" Route
+        const response = await fetch(`/tasks/${taskId}/subtasks-data`);
+        const result = await response.json(); // Convert the raw bag into JS objects
+
+        console.log("Server says ready is:", result.ready); // STEP 2
+
+        // 4. Check the 'ready' signal we built in PHP
+        if (result.ready === true) {
+            console.log("Data received:", result.data); // STEP 3
+            
+            // 5. STOP the heartbeat
+            clearInterval(checkTimer); 
+
+            // 6. Show the data!
+            updateSubtasksUI(result.data, taskId); 
+        }
+    }, 3000); // Repeat every 3 seconds
+}
+
+function updateSubtasksUI(subtasks, taskId) {
+    const targetId = 'subtask-container-' + taskId;
+    const container = document.getElementById(targetId);
+
+    console.log("Searching for ID:", targetId);
+
+    if (!container) {
+        console.warn("Could not find container:", targetId);
+        return; 
+    }
+
+    // 1. Clear the container ONCE before the loop starts
+    container.innerHTML = ''; 
+
+    // 2. Use a temporary variable to build the full list
+    let fullHtml = '';
+
+    subtasks.forEach(task => {
+        const isCompleted = task.status === 'completed';
+        const checkbox = isCompleted ? '☑' : '☐';
+        const completedClass = isCompleted ? 'completed' : '';
+        const deleteUrl = `/subtasks/${task.id}`; 
+        
+        // Build the HTML for this specific subtask row
+        fullHtml += `
+            <div class="subtask-row ${completedClass}" 
+                 onclick='event.stopPropagation(); openSubTaskEditModal(${JSON.stringify(task)})'>
+                
+                <span class="subtask-checkbox">${checkbox}</span>
+                <span class="subtask-title">${task.title}</span>
+                ${task.points ? `<span class="subtask-points">+${task.points}</span>` : ''}
+
+                <form action="${deleteUrl}" method="POST" class="delete-form" 
+                      onsubmit="return confirm('Delete this subtask?')" style="display: inline;">
+                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="delete-btn" onclick="event.stopPropagation()">🗑</button> 
+                </form>
+            </div>
+        `;
+    });
+
+    // 3. Inject all subtasks at once
+    container.innerHTML = fullHtml;
+    
+    // 4. Important: Force the container to expand so the user sees it
+    container.style.maxHeight = container.scrollHeight + "px";
+    container.style.opacity = "1";
+    
+    console.log("UI Update Complete for Task:", taskId);
+}
+
     // Sidebar toggle
     const sidebar = document.getElementById('sidebar');
     document.getElementById('sidebarToggle').addEventListener('click', () => {
@@ -1350,7 +1453,7 @@
         event.stopPropagation(); // Prevent triggering parent click
         event.preventDefault(); // Prevent any default behavior
         
-        const container = document.getElementById(`subtasks-${taskId}`);
+        const container = document.getElementById('subtask-container-' + taskId);
         const toggleBtn = event.target;
         
         if (subtaskStates[taskId]) {

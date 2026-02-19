@@ -600,22 +600,40 @@
     }
 
     .week-task {
-        position: absolute;
-        left: 2px;
-        right: 2px;
-        border-radius: 4px;
-        padding: 4px 6px;
-        font-size: 0.75rem;
-        cursor: pointer;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-left: 3px solid;
-        z-index: 10;
-        outline: 1.5px solid rgba(0, 0, 0, 0.15); /* Suble dark outline */
-        outline-offset: -1px; /* Pulls it slightly inside for a cleaner look */
+       position: absolute;
+    /* Increased margins for better 'floating' look */
+    left: 4px; 
+    right: 4px;
+    
+    /* Softer corners and better padding */
+    border-radius: 6px;
+    padding: 8px 10px;
+    
+    /* Keep font slightly smaller for the week grid */
+    font-size: 0.75rem; 
+    cursor: pointer;
+    
+    /* Shadow and Border from the bottom CSS */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid;
+    
+    /* The "Pop" Animation setup */
+    transition: all 0.2s ease;
+    z-index: 10;
+    pointer-events: auto;
+    
+    /* Clean outline look */
+    outline: 1.5px solid rgba(0, 0, 0, 0.15);
+    outline-offset: -1px;
+    
+    /* Prevent text overflow */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     }
+
+    
+   
 
     /* High Priority - Darker Red */
 .week-task.high {
@@ -637,6 +655,8 @@
     background: #dcfce7;            /* Stronger Soft Green */
     color: #14532d;                 /* Deep Green Text */
 }
+
+
 
 /* Add a hover effect to make them pop even more */
 .week-task:hover {
@@ -765,19 +785,26 @@
     }
 
     .day-task.high {
-        border-left-color: #ef4444;
-        background: #fef2f2;
+        border-left: 4px solid #b91c1c; /* Deep Red */
+    background: #fee2e2;            /* Stronger Soft Red */
+    color: #7f1d1d;           
     }
 
     .day-task.medium {
-        border-left-color: #f59e0b;
-        background: #fffbeb;
+       border-left: 4px solid #d97706; /* Rich Amber */
+    background: #fef3c7;            /* Stronger Soft Orange */
+    color: #78350f;       
     }
 
     .day-task.low {
-        border-left-color: #10b981;
-        background: #f0fdf4;
+        border-left: 4px solid #15803d; /* Forest Green */
+    background: #dcfce7;            /* Stronger Soft Green */
+    color: #14532d;    
     }
+
+   
+
+
 
     .day-task-title {
         font-weight: 600;
@@ -1187,6 +1214,64 @@
     </div>
 </div>
 
+<div id="task-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h2 id="modalTitle" class="modal-title">New Task</h2>
+        
+        <form id="taskForm" method="POST" action="/tasks">
+            @csrf
+            <input type="hidden" id="formMethod1" name="_method" value="POST">
+            <input type="hidden" id="selectedDate" name="due_date">
+
+            <label>Title</label>
+            <input type="text" name="title" id="taskTitle" placeholder="What needs to be done?" required>
+
+            <label>Date</label>
+            <input type="date" id="modal-date-input" name="due_date">
+
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Start Time</label>
+                    <input type="time" id="modal-time-input" name="start_time">
+                </div>
+                <div style="flex: 1;">
+                    <label>End Time</label>
+                    <input type="time" id="modal-end-time-input" name="end_time">
+                </div>
+            </div>
+
+            <label>Category</label>
+            <select name="category" id="taskType" required>
+                <option value="chores">Chores</option>
+                <option value="exercise">Exercise</option>
+                <option value="study">Study</option>
+                <option value="assignment">Assignment</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+            </select>
+
+            <label>Priority</label>
+            <select name="priority" id="taskPriority">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+            </select>
+
+            <label>Status</label>
+            <select name="status" id="taskStatus" required>
+
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal2()">Cancel</button>
+                <button type="submit" class="btn-submit">Save Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     // Calendar state
     let currentDate = new Date(); //return today's date
@@ -1447,32 +1532,51 @@
             
             const daySlot = document.createElement('div');
             daySlot.className = 'week-day';
+
+            // This is the "background" click
+            daySlot.onclick = () => {
+                console.log("Empty slot clicked! Opening Add Modal...");
+                openAddModal(dayDate, hour); 
+            };
             
             // 3. Fetch and Render Tasks
             const tasks = getTasksForDateAndHour(dayDate, hour);
-            tasks.forEach(task => {
-                const taskEl = document.createElement('div');
-                taskEl.className = `week-task ${task.priority}`;
-                
-                if (task.start_time && task.end_time) {
-                    const [startH, startM] = task.start_time.split(':').map(Number);
-                    const [endH, endM] = task.end_time.split(':').map(Number);
-                    const duration = ((endH * 60) + endM) - ((startH * 60) + startM);
-                    
-                    taskEl.style.top = `${startM * 2}px`;
-                    taskEl.style.height = `${duration > 0 ? (duration * 2) : 120}px`;
-                } else {
-                    taskEl.style.top = '2px';
-                    taskEl.style.height = '56px';
-                }
-                
-                taskEl.textContent = task.title;
-                taskEl.onclick = (e) => {
-                    e.stopPropagation();
-                    openEditModal(task);
-                };
-                daySlot.appendChild(taskEl);
-            });
+           tasks.forEach(task => {
+    const taskEl = document.createElement('div'); //week-task
+    
+    // 1. Check if task is completed (handling strings, booleans, or integers)
+    const isCompleted = task.status === 'completed' || task.completed == true || task.completed == 1;
+    
+    // 2. Add classes - using a template literal to include 'completed' if necessary
+    taskEl.className = `week-task ${task.priority} ${isCompleted ? 'completed' : ''}`;
+    
+    if (task.start_time && task.end_time) {
+        const [startH, startM] = task.start_time.split(':').map(Number);
+        const [endH, endM] = task.end_time.split(':').map(Number);
+        const duration = ((endH * 60) + endM) - ((startH * 60) + startM);
+        
+        taskEl.style.top = `${startM * 2}px`;
+        taskEl.style.height = `${duration > 0 ? (duration * 2) : 120}px`;
+    } else {
+        taskEl.style.top = '2px';
+        taskEl.style.height = '56px';
+    }
+
+    // Use innerHTML if you want to keep the time sub-label from before, 
+    // or textContent if you just want the title.
+    taskEl.innerHTML = `
+        <div class="week-task-title">${task.title}</div>
+        <div class="week-task-time" style="font-size: 0.7rem; opacity: 0.8;">
+            ${task.start_time} - ${task.end_time}
+        </div>
+    `;
+
+    taskEl.onclick = (e) => { // event, which is clicking
+        e.stopPropagation(); // stop the parent from being triggered
+        openEditModal(task);
+    };
+    daySlot.appendChild(taskEl);
+});
             
             weekGridEl.appendChild(daySlot);
         }
@@ -1519,27 +1623,33 @@
         dayGridEl.appendChild(scheduleColumn);
         
         // Add tasks to schedule
-        const dayTasks = getTasksForDate(currentDate);
-        dayTasks.forEach(task => {
+        // Add tasks to schedule
+const dayTasks = getTasksForDate(currentDate);
+
+dayTasks.forEach(task => {
     if (task.start_time && task.end_time) {
         const [startH, startM] = task.start_time.split(':').map(Number);
         const [endH, endM] = task.end_time.split(':').map(Number);
 
-        // 1. Calculate duration in minutes
+        // 1. Calculate duration
         const startTotalMinutes = (startH * 60) + startM;
         const endTotalMinutes = (endH * 60) + endM;
         const durationMinutes = endTotalMinutes - startTotalMinutes;
 
         const hourSlot = document.getElementById(`hour-${startH}`);
+        
         if (hourSlot && durationMinutes > 0) {
             const taskEl = document.createElement('div');
-            taskEl.className = `day-task ${task.priority}`;
+
+            // --- THE FIX: Completion Logic ---
+            const isCompleted = task.status === 'completed' || task.completed == true || task.completed == 1;
+            taskEl.className = `day-task ${task.priority} ${isCompleted ? 'completed' : ''}`;
+            // ----------------------------------
             
             // 2. Position it based on the start minute
             taskEl.style.top = `${startM * 2}px`; 
             
             // 3. Stretch it based on the duration
-            // If 1 hour = 60px height, then height = durationMinutes
             taskEl.style.height = `${durationMinutes * 2}px`;
             
             taskEl.innerHTML = `
@@ -1629,6 +1739,45 @@
 
         document.getElementById("taskModal").style.display = "flex";
     }
+
+    function openAddModal(dateObj, hour) {
+    const modal = document.getElementById('task-modal');
+    
+
+    const form = document.getElementById('taskForm');
+   
+    document.getElementById('formMethod1').value = "POST";
+    
+    // 1. Format the date to YYYY-MM-DD for the input field
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // 2. Format the time to HH:MM
+    const formattedTime = `${hour.toString().padStart(2, '0')}:00`;
+
+    // 3. Inject the values into the modal inputs
+    document.getElementById('modal-date-input').value = formattedDate;
+    document.getElementById('modal-time-input').value = formattedTime;
+
+    const nextHour = (hour + 1) % 24;
+    const endTime = `${nextHour.toString().padStart(2, '0')}:00`;
+    document.getElementById('modal-end-time-input').value = endTime;
+
+    // 4. Show the modal (remove the 'hidden' class)
+    
+    modal.style.display = 'flex';
+
+    
+
+}
+
+function closeModal2() {
+    document.getElementById('task-modal').style.display = "none";
+}
+
+
 
     function closeModal() {
         document.getElementById("taskModal").style.display = "none";

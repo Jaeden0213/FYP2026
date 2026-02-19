@@ -16,7 +16,15 @@ Route::get('/', function () {
 });
 
 Route::get('/home', [TaskController::class, 'index']);
-Route::post('/ai/task-breakdown{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
+
+Route::post('/ai/task-breakdown/{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
+Route::get('/tasks/{id}/subtasks-data', function($id) {
+    $task = \App\Models\Task::findOrFail($id);
+    return response()->json([
+        'ready' => $task->subtasks->count() > 0,
+        'data' => $task->subtasks
+    ]);
+});
 
 
 // Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
