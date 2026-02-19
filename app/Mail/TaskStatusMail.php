@@ -6,9 +6,9 @@ use App\Models\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue; // This is for queuing the email, so it doesn't block the main thread when sending emails
 
-class TaskStatusMail extends Mailable
+class TaskStatusMail extends Mailable implements ShouldQueue // ADD implements
 {
     use Queueable, SerializesModels;
 

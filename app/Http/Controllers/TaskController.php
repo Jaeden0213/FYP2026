@@ -24,6 +24,7 @@ class TaskController extends Controller
 
 public function index(Request $request)
 {
+    $start = microtime(true);
     $userId = auth()->id();
     
     // Get query parameters from the form in blade, also in the url u can see, i think these are default, if havent runform
@@ -78,8 +79,6 @@ public function index(Request $request)
         $tasksGrouped = $tasks->groupBy('priority'); // fallback
     }
 
-      
-    
 
     return view('home', compact('tasksGrouped', 'groupBy', 'date', 'sort', 'statusFilter'));
 }
@@ -230,7 +229,7 @@ public function calendar(Request $request)
                 $user = User::find($task->user_id);
 
                 if ($user && $user->email) {
-                    Mail::to($user->email)->send(
+                    Mail::to($user->email)->queue(
                         new TaskStatusMail(
                             $task,
                             'Task Completed: ' . $task->title,
@@ -239,11 +238,12 @@ public function calendar(Request $request)
                     );
                 }
 
-            $gamification->awardForTaskCompletion(auth()->user(), $task);
+            \App\Jobs\AwardTaskCompletion::dispatch($task->user_id, $task->id);
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
+
 
     // Delete task
     public function destroy($id)
