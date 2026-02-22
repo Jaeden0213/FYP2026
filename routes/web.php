@@ -10,6 +10,7 @@ use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AiTaskController; 
 use App\Http\Controllers\NotificationController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,13 +19,20 @@ Route::get('/', function () {
 Route::get('/home', [TaskController::class, 'index']);
 
 Route::post('/ai/task-breakdown/{id}', [AiTaskController::class, 'breakdownTask'])->name('AIgenerateSubtasks');
-Route::get('/tasks/{id}/subtasks-data', function($id) {
+Route::get('/tasks/{id}/subtasks-data', function(Request $request, $id) {
+    $startTime = (int) $request->query('after');
+
     $task = \App\Models\Task::findOrFail($id);
+    
+    $subtasks = $task->subtasks()->where('created_at', '>=' , date('Y-m-d H:i:s', $startTime))->get();
+
     return response()->json([
-        'ready' => $task->subtasks->count() > 0,
-        'data' => $task->subtasks
+        'ready' => $subtasks->count() > 0,
+        'data' => $subtasks
     ]);
 });
+
+//php artisan queue:work
 
 
 // Appeal route: Allow suspended users to submit (requires auth and verified, but not suspend check)
