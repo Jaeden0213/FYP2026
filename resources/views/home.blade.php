@@ -1164,9 +1164,9 @@
                                 </div>
                                 
                                   <div class="subtasks-wrapper">
-    <button class="subtask-toggle-btn" onclick="toggleSubtasks(event, {{ $task->id }})">
-        {{ $task->subtasks->count() > 0 ? '▼' : '○' }}
-    </button>
+                <button class="subtask-toggle-btn" onclick="toggleSubtasks(event, {{ $task->id }})">
+                    {{ $task->subtasks->count() > 0 ? '▼' : '○' }}
+                </button>
 
                 <div class="subtasks-container" id="subtask-container-{{ $task->id }}">
                     @if($task->subtasks->count())
@@ -1178,11 +1178,11 @@
                                 <span class="subtask-title">
                                     {{ $subtask->title }}
                                 </span>
-                                @if($subtask->points)
-                                    <span class="subtask-points">
-                                        +{{ $subtask->points }}
+                                
+                                    <span id="points-{{ $subtask->id }}" class="subtask-points" data-points = "{{$subtask->points }}" >
+                                        +{{ $subtask->points == 0 ? 'keke takde' : $subtask->points }}
                                     </span>
-                                @endif
+                                
                                 <form action="{{ route('subtasks.destroy', $subtask->id) }}" method="POST"
                                         class="delete-form" onsubmit="return confirm('Delete this subtask?')" style="display: inline;">
                                     @csrf
@@ -1316,7 +1316,7 @@
                 </div>
                 <div class="input-group">
                     <label>Points ★</label>
-                    <input type="text" name="points" id="taskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
+                    <input type="text" name="points" id="taskPoints" placeholder="0" readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
                 </div>
             </div>
 
@@ -1364,7 +1364,7 @@
 
              <div class="input-group">
                     <label>Points ★</label>
-                    <input type="text" name="points" id="subtaskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
+                    <input type="text" name="points" id="subtaskPoints"  readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
                 </div>
             
             <div class="modal-actions">
@@ -1377,6 +1377,72 @@
 
 <script>
 
+    document.addEventListener('DOMContentLoaded', function() {
+    // 1. Find the first pending subtask (if any)
+    const pending = document.querySelector('.subtask-points[data-points="0"]');
+
+    if (pending) {
+        // 2. Find the container to get the taskId
+        // We look for the parent div with the class "subtasks-container"
+        const container = pending.closest('.subtasks-container');
+        
+        if (container) {
+            // Split "subtask-container-26" by the hyphen and get the last part
+            const idParts = container.id.split('-');
+            const taskId = idParts[idParts.length - 1];
+
+            console.log("Found pending points for Task ID:", taskId);
+            
+            // 3. Start the AI Watcher
+            waitForai(taskId);
+        }
+    }
+});
+
+    async function waitForai(taskId) {
+
+            // We don't need startTime anymore if we just check if points != 0
+        const checkTimer = setInterval(async () => {
+            const response = await fetch(`/tasks/${taskId}/subtasks-points`);
+            console.log("Checking for data...");
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Server says ready is:", result.ready);
+                if (result.ready === true) {
+                    clearInterval(checkTimer);
+                    // Update your UI here
+                    
+                updateSubtasksPoints(result.data, taskId) 
+                }
+            }
+        }, 3000);
+    }
+
+    function updateSubtasksPoints(subtasks) {
+    // 1. 'subtasks' is the array of objects from your JSON
+    subtasks.forEach(subtask => {
+        
+        // 2. We use the ID to find the specific leaf (span) for this subtask
+       
+        const pointsLeaf = document.getElementById(`points-${subtask.id}`);
+
+        // 3. If we found the leaf, and the AI gave it points...
+        if (pointsLeaf && subtask.points > 0) {
+            
+            // Update the visual text (+15)
+            pointsLeaf.innerText = `+${subtask.points}`;
+            
+            // Update the data-attribute so the watcher knows it's finished
+            pointsLeaf.setAttribute('data-points', subtask.points);
+
+            // Optional: Give it a "Success" style
+            
+            pointsLeaf.style.fontWeight = "bold";
+        }
+    });
+}
+    
+
     async function handleAiClick(taskId) {
         // 1. Prevent the page from freezing/reloading
         const target = 'status-msg-' + taskId; 
@@ -1384,7 +1450,7 @@
 
         // 2. Call the Controller in the background (AJAX)
         // We don't await the AI to finish, we just trigger the start
-        fetch(`ai/task-breakdown/${taskId}`, { //we do this as tradisional form will need for stuff to be done, only return, that still stalls
+        fetch(`ai/task-breakdown/${taskId}`, { 
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1398,7 +1464,8 @@
         // Since we didn't reload, this timer will actually live!
         waitForAI(taskId, startTime);
     }
-    
+
+   
     function waitForAI(taskId, startTime) {
     // 1. Tell the user we are waiting
     const target = 'status-msg-' + taskId
@@ -1617,6 +1684,8 @@ function updateSubtasksUI(subtasks, taskId) {
         document.getElementById("subtaskPoints").value = "0";
 
         document.getElementById("subtaskModal").style.display = "flex";
+
+        waitForai(task.id);
     }
 
     function openSubTaskEditModal(subtask) {

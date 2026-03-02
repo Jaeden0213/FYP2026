@@ -43,30 +43,56 @@ class AiTaskService
         }
         ";
 
-        // $prompt = "
-        //Break the following task into 3- 5 clear actionable subtasks with title description, priority and 
-        //for points assign a 'weight' (a decimal between 0.1 and 0.9) 
-        //representing its complexity. 
-        //The SUM of all weights must equal exactly 1.0. :
-
-       // Title: {$task->title}
-       // Description: {$task->description}
-
-       // Respond ONLY in JSON:
-       // {
-      //    \"subtasks\": [\"subtask 1\", \"subtask 2\"]
-       // }
-       // ";
+       
 
     return OpenAiClient::ask($prompt);
 
         $response = OpenAiClient::ask($prompt); //returned as array o
 
-        
-
-          
-    return $response;
+      return $response;
     }
+
+    public static function generateSubTaskPointsViaAI(Task $task, $subtasks) 
+{
+
+    $subtaskCount = $subtasks->count();
+    // We convert the subtasks to a simple string so the AI can read them easily
+    $subtasksList = $subtasks->map(function($s) {
+    // Send the ID so the AI can give it back to us
+    return "ID: {$s->id}, Title: {$s->title}";
+})->implode("\n");
+
+    $prompt = "
+Main Task: {$task->title}
+Total Points: {$task->points}
+
+Existing Subtasks:
+{$subtasksList}  // Make sure this includes IDs
+
+INSTRUCTION:
+1. Assign integer points to EACH subtask.
+2. Include the 'id' in the JSON response for each subtask.
+3. Do NOT invent new subtasks.
+4. The sum of all points must equal {$task->points}.
+5. Return ONLY valid JSON.
+
+JSON format:
+
+{
+  \"subtasks\": [
+    {
+      \"id\": 7,
+      \"points\": 20
+    }
+  ]
+}
+";
+
+    $response = OpenAiClient::ask($prompt);
+    \Log::info('Full Response', json_decode(json_encode($response), true));
+    return $response['subtasks'] ?? [];
+}
+
 
     public function generateTaskPointsViaAI(Request $request){
 
@@ -97,35 +123,7 @@ class AiTaskService
 
     }
 
-    public function generateSubTaskPointsViaAI(Request $request){
-
-      $prompt = "
-      You are a gamification engine. Assign task points (1-100) based on these rules:
-      1. Base effort: How much time/energy does the Title and Description imply?
-      2. Priority Multiplier: High priority tasks get a 50% bonus.
-      3. Complexity: More detailed descriptions suggest higher effort.
-
-      Task Details:
-      - Title: {$request->title}
-      - Description: {$request->description}
-      - Priority: {$request->priority}
-      - Category: {$request->category}
-
-      Respond ONLY in valid JSON:
-      {
-        \"points\": 50
-      }";
-
-       // This currently returns ['points' => 50]
-       $response = OpenAiClient::ask($prompt);
-
-       // FIX: Reach into the array and get the actual integer
-       if (is_array($response) && isset($response['points'])) {
-        return (int) $response['points']; 
-    }
-
-    }
-
+    
 
     // gen points
    // public static function ($validated) {

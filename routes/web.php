@@ -32,6 +32,22 @@ Route::get('/tasks/{id}/subtasks-data', function(Request $request, $id) {
     ]);
 });
 
+Route::get('/tasks/{id}/subtasks-points', function(Request $request, $id) {
+    $startTime = (int) $request->query('after');
+
+    $task = \App\Models\Task::findOrFail($id);
+    
+    $subtasks = $task->subtasks()->where('created_at', '>=' , date('Y-m-d H:i:s', $startTime))->get();
+    $pending = $task->subtasks->where('points', 0)->count();
+
+    return response()->json([
+        'ready' => $pending === 0,
+        'data' => $subtasks
+    ]);
+});
+
+//Route::post('/ai/subtask-points/{id}', [AiTaskController::class, 'subTaskPoints'])->name('AIgenerateSubtasksPoints');
+
 //php artisan queue:work
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Subtask;
 use App\Models\Task;
+use App\Jobs\ProcessSubtaskPoints;
 
 class SubTaskController extends Controller
 {
@@ -26,7 +27,12 @@ class SubTaskController extends Controller
 
     $this->balancePoints($id);
 
+    $task = Task::findOrFail($id);
+
+    ProcessSubtaskPoints::dispatch($task);
+
     return redirect()->route('tasks.index')->with('success', 'Sub Task created successfully!');
+
 }
     
 
@@ -81,11 +87,15 @@ class SubTaskController extends Controller
 
     $this->balancePoints($parentTaskId);
 
+    $task = Task::findOrFail($parentTaskId);
+
+    ProcessSubtaskPoints::dispatch($task);
+
     return redirect()->route('tasks.index')->with('success', 'Subtask deleted successfully!');
 
     }
 
-    public function balancePoints($taskId)
+    public function balancePoints1($taskId)
 {
     $task = Task::with('subtasks')->find($taskId);
     $count = $task->subtasks->count();
@@ -98,4 +108,16 @@ class SubTaskController extends Controller
         $task->subtasks()->update(['points' => $pointsPerSubtask]);
     }
 }
+
+    public function balancePoints($taskId)
+{
+    $task = Task::findorfail($taskId);
+
+    $task->subtasks()->update([
+        'points' => 0
+    ]);
+
+   
+}
+
 }

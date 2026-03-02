@@ -19,7 +19,7 @@ class ProcessAiSubtasks implements ShouldQueue
 
     public function handle(): void
     {
-        // MOVE YOUR SLOW AI CODE HERE
+        
         $response = AiTaskService::generateSubtasks($this->task, $this->task->subtasks);
   
         if (isset($response['subtasks'])) {

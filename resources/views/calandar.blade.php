@@ -593,6 +593,11 @@
         position: relative;
         background: white;
         height: 120px !important;
+        
+    }
+
+    .week-day:hover {
+        background: #f9fafb;
     }
 
     .week-day:last-child {
@@ -681,7 +686,7 @@
 }
 
 /* Fix the double comma and selector error here */
-.week-task-time, 
+
 .day-task.completed {
     white-space: nowrap;
     overflow: hidden;
@@ -755,6 +760,10 @@
         height: 120px !important; /* Changed from 60px */
         position: relative;
     }
+    
+    .day-hour:hover {
+        background: #f9fafb;
+    }
 
     #week-header {
     padding-right: 15px; /* Manually match the average scrollbar width */
@@ -806,15 +815,15 @@
 
 
 
-    .day-task-title {
+    .day-task-title, .week-task-title {
         font-weight: 600;
         margin-bottom: 4px;
         font-size: 0.9rem;
     }
 
-    .day-task-time {
+    .day-task-time, .week-task-time {
         font-size: 0.8rem;
-        color: #6b7280;
+        color: #000000;
     }
 
     /* ===== Modal Overlay ===== */
@@ -1194,17 +1203,27 @@
                 <option value="completed">Completed</option>
             </select>
             
-            <label>Assignee</label>
-            <input type="text" name="assignee" id="taskAssignee">
+           
             
-            <label>Start Time (Optional)</label>
-            <input type="time" name="start_time" id="taskStartTime">
+           
+
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Start Time</label>
+                    <input type="time" id="taskStartTime" name="start_time">
+                </div>
+                <div style="flex: 1;">
+                    <label>End Time</label>
+                    <input type="time" id="taskEndTime" name="end_time">
+                </div>
+            </div>
             
-            <label>End Time (Optional)</label>
-            <input type="time" name="end_time" id="taskEndTime">
             
-            <label>Points</label>
-            <input type="number" name="points" id="taskPoints" min="0" value="0">
+
+            <div class="input-group">
+                    <label>Points ★</label>
+                    <input type="text" name="points" id="taskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
+                </div>
             
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -1224,7 +1243,11 @@
             <input type="hidden" id="selectedDate" name="due_date">
 
             <label>Title</label>
-            <input type="text" name="title" id="taskTitle" placeholder="What needs to be done?" required>
+            <input type="text" name="title" id="taskTitle"  required>
+            
+
+            <label>Description</label>
+            <textarea name="description" id="taskDescription"></textarea>
 
             <label>Date</label>
             <input type="date" id="modal-date-input" name="due_date">
@@ -1457,7 +1480,12 @@
                             <div class="calendar-task ${task.priority} ${task.status === 'completed' ? 'completed' : ''}" 
                                  onclick="openEditModal(${JSON.stringify(task).replace(/"/g, '&quot;')})">
                                 <div class="task-title">${task.title}</div>
-                                ${task.start_time ? `<div class="task-time">🕒 ${task.start_time}</div>` : ''}
+                                ${task.start_time ? `
+                                        <div class="task-time">
+                                            🕒 ${task.start_time.slice(0, 5)} - ${task.end_time.slice(0, 5)} 
+                                        </div>` 
+                                    : ''}
+                                
                             </div>
                         `).join('')}
                         ${dayTasks.length > maxVisibleTasks ? `
@@ -1567,8 +1595,14 @@
     taskEl.innerHTML = `
         <div class="week-task-title">${task.title}</div>
         <div class="week-task-time" style="font-size: 0.7rem; opacity: 0.8;">
-            ${task.start_time} - ${task.end_time}
+            ${task.start_time.slice(0, 5)} - ${task.end_time.slice(0, 5)}
         </div>
+        <div class="week-task-title">${task.description}</div>
+
+       
+                                             
+                                        
+                                  
     `;
 
     taskEl.onclick = (e) => { // event, which is clicking
@@ -1654,7 +1688,8 @@ dayTasks.forEach(task => {
             
             taskEl.innerHTML = `
                 <div class="day-task-title">${task.title}</div>
-                <div class="day-task-time">${task.start_time} - ${task.end_time}</div>
+                <div class="day-task-time">${task.start_time.slice(0, 5)} - ${task.end_time.slice(0, 5)}</div>
+                <div class="day-task-title">${task.description}</div>
             `;
             
             taskEl.onclick = () => openEditModal(task);
@@ -1702,11 +1737,12 @@ dayTasks.forEach(task => {
 
         // Clear fields
         document.getElementById("taskTitle").value = "";
-        document.getElementById("taskAssignee").value = "";
+        
+        
         document.getElementById("taskStartTime").value = "";
         document.getElementById("taskEndTime").value = "";
         document.getElementById("taskPriority").value = "medium";
-        document.getElementById("taskStatus").value = "pending";
+        document.getElementById("taskStatus").value = "in_progress";
         document.getElementById("taskDescription").value = "";
         document.getElementById("taskType").value = "chores";
         document.getElementById("taskPoints").value = "0";
@@ -1729,7 +1765,7 @@ dayTasks.forEach(task => {
         // Fill fields
         document.getElementById("taskTitle").value = task.title || "";
         document.getElementById("taskDescription").value = task.description || "";
-        document.getElementById("taskAssignee").value = task.assignee || "";
+        
         document.getElementById("taskStartTime").value = task.start_time || "";
         document.getElementById("taskEndTime").value = task.end_time || "";
         document.getElementById("taskPriority").value = task.priority || "medium";
@@ -1760,6 +1796,7 @@ dayTasks.forEach(task => {
     // 3. Inject the values into the modal inputs
     document.getElementById('modal-date-input').value = formattedDate;
     document.getElementById('modal-time-input').value = formattedTime;
+    
 
     const nextHour = (hour + 1) % 24;
     const endTime = `${nextHour.toString().padStart(2, '0')}:00`;

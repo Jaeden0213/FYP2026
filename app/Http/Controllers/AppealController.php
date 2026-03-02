@@ -10,10 +10,7 @@ class AppealController extends Controller
 {
     public function store(Request $request)
     {
-        // Safety: only logged-in users
-        //if (!Auth::check()) {
-       //     return redirect()->route('login');
-      //  }
+        
 
         // Validate input
         $request->validate([
@@ -25,9 +22,9 @@ class AppealController extends Controller
             ->where('status', 'pending')
             ->first();
 
-      //  if ($existingAppeal) {
-       //     return back()->with('error', 'You already have a pending appeal.');
-      //  }
+        if ($existingAppeal) {
+            return back()->with('error', 'You already have a pending appeal.');
+        }
 
         // Store appeal
 
