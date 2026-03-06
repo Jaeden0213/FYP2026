@@ -676,25 +676,7 @@
                                type="password" name="password" required autocomplete="new-password" 
                                placeholder="••••••••" />
                     </div>
-                    
-                    <!-- Password Strength Indicator -->
-                    <div class="password-strength">
-                        <div class="strength-meter">
-                            <div class="strength-fill" id="strengthFill"></div>
-                        </div>
-                        <div class="strength-text" id="strengthText">Password strength: Very weak</div>
-                        
-                        <div class="strength-requirements">
-                            <div class="requirements-title">Password Requirements:</div>
-                            <ul class="requirements-list">
-                                <li class="requirement-item" id="reqLength">At least 8 characters</li>
-                                <li class="requirement-item" id="reqUppercase">One uppercase letter</li>
-                                <li class="requirement-item" id="reqLowercase">One lowercase letter</li>
-                                <li class="requirement-item" id="reqNumber">One number</li>
-                                <li class="requirement-item" id="reqSpecial">One special character</li>
-                            </ul>
-                        </div>
-                    </div>
+                
                     
                     @if($errors->has('password'))
                         <ul class="error-messages">

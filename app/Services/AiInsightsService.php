@@ -20,7 +20,7 @@ class AiInsightsService
             'overdue' => $stats['overdue'] ?? null,
             'behaviour' => $stats['behaviour'] ?? null,
         ];
-//to do do better analysis
+//to do do better analysis, separate into two sections: 1) performance (kpis, trends) 2) behaviour (daily/weekly summaries) 3) Solution based on my behaviour (eg if I procrastinate a lot, recommend using reminders more often)
         $prompt = "
 You are a supportive productivity coach inside a student productivity web application.
 
