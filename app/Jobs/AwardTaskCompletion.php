@@ -17,13 +17,12 @@ class AwardTaskCompletion implements ShouldQueue
 
     public function __construct(public int $userId, public int $taskId) {}
 
-    public function handle(GamificationService $gamification): void
+   public function handle(\App\Services\GamificationService $gamification)
     {
-        $user = User::find($this->userId);
-        $task = Task::find($this->taskId);
+        $user = \App\Models\User::findOrFail($this->userId);
+        $task = \App\Models\Task::findOrFail($this->taskId);
 
-        if (!$user || !$task) return;
-
+        // IMPORTANT: use task points (AI)
         $gamification->awardForTaskCompletion($user, $task);
     }
 }

@@ -10,12 +10,13 @@ class GamificationService
 {
     public function awardForTaskCompletion(User $user, Task $task): void
     {
-        $points = match ($task->priority) {
-            'high' => 30,
-            'medium' => 20,
-            'low' => 10,
-            default => 10,
-        };
+        $points = (int) $task->points;
+
+        \Log::info('Awarding task completion points', [
+            'task_id' => $task->id,
+            'task_points' => $task->points,
+            'awarded_points' => $points,
+        ]);
 
         Point::create([
             'user_id' => $user->id,

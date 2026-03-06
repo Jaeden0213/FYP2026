@@ -7,7 +7,7 @@ use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\GamificationService;
-use app\Http\Controllers\AiTaskController;
+use App\Http\Controllers\AiTaskController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TaskStatusMail;
 use App\Models\User;
@@ -183,7 +183,7 @@ public function calendar(Request $request)
 
         $task = Task::findOrFail($id);
         $oldStatus = $task->status;
-
+            
        // if task is comepleted, make all sub task comepleted too
     if ($oldStatus !== 'completed' && $validated['status'] === 'completed') {
         
@@ -207,10 +207,6 @@ public function calendar(Request $request)
     if ($allFinished) {
         $task->update(['status' => 'completed']);
     }
-
-
-
-
             $task->update($validated); // no need user_id? no need ah jordon bcos we r just changing the tasks using task id. ok
                 // In-app notification ONLY when status changes to completed //try async
             if ($oldStatus !== 'completed' && $task->status === 'completed') {
@@ -239,6 +235,7 @@ public function calendar(Request $request)
                 }
 
             \App\Jobs\AwardTaskCompletion::dispatch($task->user_id, $task->id);
+            \Log::info('TASK POINTS AFTER UPDATE', ['points' => $task->fresh()->points]);
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');

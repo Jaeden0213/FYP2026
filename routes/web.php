@@ -10,6 +10,7 @@ use App\Http\Controllers\AppealController;
 use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AiTaskController; 
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AnalyticsController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -91,6 +92,13 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+
+     // Analytics
+    
+    Route::get('/analytics/overview-data', [AnalyticsController::class, 'overviewData'])->name('analytics.overviewData');
+    Route::get('/analytics/charts-data', [AnalyticsController::class, 'chartsData'])->name('analytics.chartsData');
+    Route::get('/analytics/insights-data', [AnalyticsController::class, 'insightsData'])->name('analytics.insightsData');
 
 });
 
