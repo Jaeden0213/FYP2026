@@ -482,7 +482,7 @@
             <span class="text">User Management</span>
         </a>
         
-        <a href="{{ route('admin.users') }}" class="nav-icon {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+        <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
             <span class="icon">📈</span>
             <span class="text">User Growth</span>
         </a>
@@ -492,9 +492,9 @@
             <span class="text">Rewards</span>
         </a>
 
-         <a href="{{ route('admin.growth') }}" class="nav-icon {{ request()->routeIs('admin.growth') ? 'active' : '' }}">
+         <a href="{{ route('admin.appeals') }}" class="nav-icon {{ request()->routeIs('admin.appeals') ? 'active' : '' }}">
             <span class="icon">📜</span>
-            <span class="text">User Logs</span>
+            <span class="text">User Appeals</span>
         </a>
         
     </div>
@@ -514,7 +514,7 @@
         
         <a href="{{ route('tasks.calendar') }}" class="nav-icon {{ request()->routeIs('tasks.calendar') ? 'active' : '' }}">
             <span class="icon">📋</span>
-            <span class="text">Calandar</span>
+            <span class="text">Calendar</span>
         </a>
         
     <a href="{{ route('store.index') }}" class="nav-icon {{ request()->routeIs('store.*') ? 'active' : '' }}">

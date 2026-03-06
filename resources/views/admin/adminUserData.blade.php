@@ -192,34 +192,9 @@
               
             </div>
 
-            <!-- Legend -->
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-                <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                    <span>Active User</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                    <span>Suspended User</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
-                    <span>Admin User</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="text-xs text-gray-400 mr-2">⚠️</div>
-                    <span>Action requires confirmation</span>
-                </div>
-            </div>
+           
         </div>
     </div>
 
-    <!-- Confirmation Modal Script -->
-    <script>
-        // Optional: Add sweetalert for better confirmation dialogs
-        document.addEventListener('DOMContentLoaded', function() {
-            // You can enhance with sweetalert2 if desired
-            // https://sweetalert2.github.io/
-        });
-    </script>
+   
 </x-app-layout>

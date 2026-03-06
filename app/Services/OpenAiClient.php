@@ -27,20 +27,8 @@ class OpenAiClient
              'temperature' => 0.2
             ]);
 
-            
-
-        
-
-     
-
-
         $data = $response->json(); // json -> array
         //http://127.0.0.1:8000/api/ai/task-breakdown
-
-    
-
-  
-
 
         // 1️⃣ If OpenAI returned an error
         if (!isset($data['choices'][0]['message']['content'])) { //so is just digging down this tree to get that string(content).

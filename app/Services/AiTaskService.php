@@ -31,7 +31,7 @@ class AiTaskService
         5. The SUM of ALL weights in your response must equal exactly 1.0.
 
         Respond ONLY in JSON:
-        {
+        { 
           \"subtasks\": [
             {
               \"title\": \"Subtask Title\",

@@ -1403,7 +1403,7 @@
 
             // We don't need startTime anymore if we just check if points != 0
         const checkTimer = setInterval(async () => {
-            const response = await fetch(`/tasks/${taskId}/subtasks-points`);
+            const response = await fetch(`/tasks/${taskId}/subtasks-points`); // to call subtask points
             console.log("Checking for data...");
             if (response.ok) {
                 const result = await response.json();

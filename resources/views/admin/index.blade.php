@@ -1,171 +1,293 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white p-4 md:p-6">
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem;
+        }
+
+        .admin-card {
+            aspect-ratio: 1 / 1; /* Makes it square */
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            position: relative;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-gradient-top {
+            height: 4px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .card-content {
+            flex: 1;
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-card:hover .icon-wrapper {
+            transform: scale(1.1);
+        }
+
+        .icon-wrapper span {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+            max-width: 180px;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .card-hover-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transform: scaleX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-card:hover .card-hover-indicator {
+            transform: scaleX(1);
+        }
+
+        /* Color variations */
+        .card-blue .icon-wrapper { background: #eff6ff; }
+        .card-blue .badge-dot { background: #3b82f6; }
+        .card-blue .card-badge { background: #eff6ff; color: #1e40af; }
+
+        .card-green .icon-wrapper { background: #f0fdf4; }
+        .card-green .badge-dot { background: #22c55e; }
+        .card-green .card-badge { background: #f0fdf4; color: #166534; }
+
+        .card-yellow .icon-wrapper { background: #fef3c7; }
+        .card-yellow .badge-dot { background: #eab308; }
+        .card-yellow .card-badge { background: #fef3c7; color: #854d0e; }
+
+        .card-purple .icon-wrapper { background: #faf5ff; }
+        .card-purple .badge-dot { background: #a855f7; }
+        .card-purple .card-badge { background: #faf5ff; color: #6b21a8; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+            
+            .dashboard-title {
+                font-size: 2rem;
+            }
+            
+            .card-content {
+                padding: 1.5rem;
+            }
+            
+            .icon-wrapper {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .icon-wrapper span {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .admin-card:nth-child(1) { animation-delay: 0.1s; }
+        .admin-card:nth-child(2) { animation-delay: 0.2s; }
+        .admin-card:nth-child(3) { animation-delay: 0.3s; }
+        .admin-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+
+    <div class="dashboard-container">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p class="text-gray-600 mt-2">Manage your application's users, growth, rewards, and logs</p>
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Admin Dashboard</h1>
+            <p class="dashboard-subtitle">Manage your application's users, rewards, and appeals from one central location</p>
         </div>
 
-        <!-- Dashboard Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Cards Grid -->
+        <div class="cards-grid">
             <!-- User Data Card -->
-            <a href="{{ route('admin.users') }}" 
-               class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200">
-                <!-- Gradient Top Border -->
-                <div class="h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
-                
-                <div class="p-6 flex flex-col items-center text-center">
-                    <!-- Icon Container -->
-                    <div class="mb-4 p-4 bg-blue-50 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-4xl">🗂️</span>
+            <a href="{{ route('admin.users') }}" class="admin-card card-blue">
+                <div class="card-gradient-top" style="background: linear-gradient(to right, #3b82f6, #06b6d4);"></div>
+                <div class="card-content">
+                    <div class="icon-wrapper">
+                        <span>🗂️</span>
                     </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">User Data</h3>
-                    <p class="text-gray-600 text-sm mb-4">Manage and view all registered accounts</p>
-                    
-                    <!-- Stats Badge -->
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
-                        <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                        {{-- You can add dynamic count here --}}
+                    <h3 class="card-title">User Data</h3>
+                    <p class="card-description">Manage and view all registered accounts</p>
+                    <div class="card-badge">
+                        <span class="badge-dot"></span>
                         Active Users
                     </div>
                 </div>
-                
-                <!-- Hover Indicator -->
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="card-hover-indicator" style="background: linear-gradient(to right, #3b82f6, #06b6d4);"></div>
             </a>
 
             <!-- User Growth Card -->
-            <a href="{{ route('admin.growth') }}" 
-               class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-green-200">
-                <div class="h-1 bg-gradient-to-r from-green-500 to-emerald-400"></div>
-                
-                <div class="p-6 flex flex-col items-center text-center">
-                    <div class="mb-4 p-4 bg-green-50 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-4xl">📈</span>
+            <a href="{{ route('admin.growth') }}" class="admin-card card-green">
+                <div class="card-gradient-top" style="background: linear-gradient(to right, #22c55e, #10b981);"></div>
+                <div class="card-content">
+                    <div class="icon-wrapper">
+                        <span>📈</span>
                     </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">User Growth</h3>
-                    <p class="text-gray-600 text-sm mb-4">Analyze registration trends and metrics</p>
-                    
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    <h3 class="card-title">User Growth</h3>
+                    <p class="card-description">Analyze registration trends and metrics</p>
+                    <div class="card-badge">
+                        <span class="badge-dot"></span>
                         Analytics
                     </div>
                 </div>
-                
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="card-hover-indicator" style="background: linear-gradient(to right, #22c55e, #10b981);"></div>
             </a>
 
             <!-- Rewards Management Card -->
-            <a href="{{ route('admin.rewards.index') }}"
-            class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-yellow-200">
-                <div class="h-1 bg-gradient-to-r from-yellow-500 to-amber-400"></div>
-                
-                <div class="p-6 flex flex-col items-center text-center">
-                    <div class="mb-4 p-4 bg-yellow-50 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-4xl">🏆</span>
+            <a href="{{ route('admin.rewards.index') }}" class="admin-card card-yellow">
+                <div class="card-gradient-top" style="background: linear-gradient(to right, #eab308, #f59e0b);"></div>
+                <div class="card-content">
+                    <div class="icon-wrapper">
+                        <span>🏆</span>
                     </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Rewards</h3>
-                    <p class="text-gray-600 text-sm mb-4">Create and manage user rewards system</p>
-                    
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-sm font-medium">
-                        <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                    <h3 class="card-title">Rewards</h3>
+                    <p class="card-description">Create and manage user rewards system</p>
+                    <div class="card-badge">
+                        <span class="badge-dot"></span>
                         Manage Prizes
                     </div>
                 </div>
-                
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 to-amber-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="card-hover-indicator" style="background: linear-gradient(to right, #eab308, #f59e0b);"></div>
             </a>
 
-            <!-- App Logs Card -->
-            <a href="{{ route('admin.users') }}" 
-               class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-purple-200">
-                <div class="h-1 bg-gradient-to-r from-purple-500 to-pink-400"></div>
-                
-                <div class="p-6 flex flex-col items-center text-center">
-                    <div class="mb-4 p-4 bg-purple-50 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-4xl">📋</span>
+            <!-- Users Appeals Card -->
+            <a href="{{ route('admin.appeals') }}" class="admin-card card-purple">
+                <div class="card-gradient-top" style="background: linear-gradient(to right, #a855f7, #ec4899);"></div>
+                <div class="card-content">
+                    <div class="icon-wrapper">
+                        <span>⚖️</span>
                     </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">App Logs</h3>
-                    <p class="text-gray-600 text-sm mb-4">Monitor application activity and errors</p>
-                    
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-sm font-medium">
-                        <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                        System Activity
-                    </div>
-                </div>
-                
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </a>
-
-            <!-- App Logs Card -->
-            <a href="{{ route('admin.appeals') }}" 
-               class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-purple-200">
-                <div class="h-1 bg-gradient-to-r from-purple-500 to-pink-400"></div>
-                
-                <div class="p-6 flex flex-col items-center text-center">
-                    <div class="mb-4 p-4 bg-purple-50 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-4xl">⚖️</span>
-                    </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Users appeals</h3>
-                    <p class="text-gray-600 text-sm mb-4">Approve or Deny appeal request</p>
-                    
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-sm font-medium">
-                        <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                    <h3 class="card-title">Users Appeals</h3>
+                    <p class="card-description">Approve or Deny appeal requests</p>
+                    <div class="card-badge">
+                        <span class="badge-dot"></span>
                         Activate suspended users
                     </div>
                 </div>
-                
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="card-hover-indicator" style="background: linear-gradient(to right, #a855f7, #ec4899);"></div>
             </a>
         </div>
 
-        
-        <!-- Recent Activity -->
-        <div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-900">Recent Activity</h2>
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">View All →</button>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <span class="text-sm">👤</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">New user registered</p>
-                        <p class="text-xs text-gray-500">john.doe@example.com • 2 minutes ago</p>
-                    </div>
-                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">User</span>
-                </div>
-                
-                <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
-                    <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
-                        <span class="text-sm">🏆</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">Reward claimed by user</p>
-                        <p class="text-xs text-gray-500">Premium Subscription • 15 minutes ago</p>
-                    </div>
-                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Reward</span>
-                </div>
-                
-                <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
-                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                        <span class="text-sm">📋</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">Error logged in API</p>
-                        <p class="text-xs text-gray-500">Payment gateway timeout • 1 hour ago</p>
-                    </div>
-                    <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">Error</span>
-                </div>
-            </div>
-        </div>
+      
     </div>
 </x-app-layout>
