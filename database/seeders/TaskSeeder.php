@@ -65,7 +65,7 @@ class TaskSeeder extends Seeder
                     'description' => "Automated $cat session for " . $date->format('l'),
                     'priority' => $priorities[array_rand($priorities)],
                     'category' => $cat,
-                    'status' => 'pending',
+                    'status' => 'in_progress',
                     'assignee' => null,
                     'due_date' => $date->toDateString(),
                     'points' => rand(20, 50), // Randomize points too!

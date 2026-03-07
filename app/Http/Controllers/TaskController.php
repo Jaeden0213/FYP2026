@@ -160,7 +160,8 @@ public function calendar(Request $request)
 
 
 
-    return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    //return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    return back()->with('success', 'Task created successfully!');
 }
 
 
@@ -239,7 +240,8 @@ public function calendar(Request $request)
             \Log::info('TASK POINTS AFTER UPDATE', ['points' => $task->fresh()->points]);
         }
 
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+        //return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+        return back()->with('success', 'Task updated successfully!');
     }
 
 
@@ -249,7 +251,8 @@ public function calendar(Request $request)
         $task = Task::findOrFail($id);
         $task->delete();
 
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+        //return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+        return back()->with('success', 'Task deleted successfully!');
     }
 
     

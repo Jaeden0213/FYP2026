@@ -99,8 +99,9 @@ JSON format:
       $prompt = "
       You are a gamification engine. Assign task points (1-100) based on these rules:
       1. Base effort: How much time/energy does the Title and Description imply?
-      2. Priority Multiplier: High priority tasks get a 50% bonus.
+      2. Priority Multiplier: High priority tasks get a 50% bonus, Medium priority tasks gets a 25% bonus
       3. Complexity: More detailed descriptions suggest higher effort.
+      4. Difficulity: More difficult task such as study and assignment categories should get 50% higher bonus.
 
       Task Details:
       - Title: {$request->title}

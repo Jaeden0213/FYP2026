@@ -954,6 +954,18 @@
         box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
     }
 
+    .btn-danger {
+        background: linear-gradient(135deg, #af2a20 0%, #d61212 100%);
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(167, 51, 51, 0.31);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(134, 29, 3, 0.53);
+    }
+
     /* Tooltip for collapsed sidebar icons */
     .sidebar a .icon-tooltip {
         position: absolute;
@@ -1051,6 +1063,98 @@
     }
 </style>
 
+@if(session('success'))
+    <div id="toast-success" class="toast-container" onclick="dismissToast()">
+        <div class="toast-content">
+            <span class="toast-icon">✨</span>
+            <span class="toast-text">{{ session('success') }}</span>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 350px;
+            max-width: 90%;
+            background: #ffffff;
+            border-bottom: 5px solid #10b981;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 10000;
+            animation: dropIn 0.5s ease-out;
+            cursor: pointer; /* Indicates it's clickable */
+        }
+
+        .toast-content {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .toast-text { 
+            color: #1f2937; 
+            font-weight: 600; 
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .toast-progress {
+            height: 4px;
+            background: #10b981;
+            width: 100%;
+            animation: progress 7s linear forwards;
+        }
+
+        /* PAUSE ANIMATION ON HOVER */
+        .toast-container:hover .toast-progress {
+            animation-play-state: paused;
+        }
+
+        @keyframes dropIn {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+
+    <script>
+        // Store timeout ID to clear it if user clicks early
+        let toastTimeout;
+
+        function startToastTimer() {
+            toastTimeout = setTimeout(() => {
+                dismissToast();
+            }, 7000); // 7 seconds
+        }
+
+        function dismissToast() {
+            const toast = document.getElementById('toast-success');
+            if (toast) {
+                // Clear the automatic timer so it doesn't try to remove it twice
+                clearTimeout(toastTimeout);
+                
+                toast.style.transition = "all 0.3s ease";
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, -20px)";
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        // Start the timer when the page loads
+        startToastTimer();
+    </script>
+@endif
 
 <div class="app-container">
     <!-- Sidebar -->
@@ -1165,6 +1269,7 @@
 <div id="taskModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
         <h2 id="modalTitle" class="modal-title">New Task</h2>
+        
         <form id="taskForm" method="POST">
             @csrf
             <input type="hidden" id="formMethod" name="_method" value="POST">
@@ -1182,8 +1287,6 @@
                 <option value="exercise">Exercise</option>
                 <option value="study">Study</option>
                 <option value="assignment">Assignment</option>
-                <option value="work">Work</option>
-                <option value="personal">Personal</option>
             </select>
             
             <label>Priority</label>
@@ -1195,14 +1298,9 @@
             
             <label>Status</label>
             <select name="status" id="taskStatus" required>
-
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
             </select>
-            
-           
-            
-           
 
             <div style="display: flex; gap: 10px;">
                 <div style="flex: 1;">
@@ -1214,19 +1312,34 @@
                     <input type="time" id="taskEndTime" name="end_time">
                 </div>
             </div>
-            
-            
-
             <div class="input-group">
-                    <label>Points ★</label>
-                    <input type="text" name="points" id="taskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
-                </div>
-            
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-submit">Save</button>
+                <label>Points ★</label>
+                <input type="text" name="points" id="taskPoints" placeholder="✨ AI calculating rewards..." readonly style="background: #f9fafb; border-style: dashed; color: #9ca3af;">
             </div>
+
+
+
+            <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 10px;">
+        
+                <div>
+                    <button type="button" id="deleteTaskBtn" class="btn-danger" style="display:none;" onclick="confirmDelete()">
+                        Delete
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                </div>
+            </div>
+
         </form>
+
+        <form id="deleteForm" method="POST" style="display:none;">
+            @csrf
+            @method('DELETE')
+        </form>
+
     </div>
 </div>
 
@@ -1289,6 +1402,8 @@
                 <button type="submit" class="btn-submit">Save Task</button>
             </div>
         </form>
+
+        
     </div>
 </div>
 
@@ -1761,17 +1876,30 @@ dayTasks.forEach(task => {
 
         // Fill fields
         document.getElementById("taskTitle").value = task.title || "";
-        document.getElementById("taskDescription").value = task.description || "";
+        document.getElementById("taskDescription").value = task.description || "hi";
         
         document.getElementById("taskStartTime").value = task.start_time || "";
         document.getElementById("taskEndTime").value = task.end_time || "";
         document.getElementById("taskPriority").value = task.priority || "medium";
         document.getElementById("taskPoints").value = task.points || "0";
-        document.getElementById("taskStatus").value = task.status || "pending";
+        document.getElementById("taskStatus").value = task.status || "in_progress";
         document.getElementById("taskType").value = task.category || "chores";
+
+        // delete button
+        // Set the action for the hidden delete form
+    document.getElementById("deleteForm").action = "/tasks/" + task.id;
+    
+    // Show the delete button (in case it was hidden for 'Create' mode)
+    document.getElementById("deleteTaskBtn").style.display = "block";
 
         document.getElementById("taskModal").style.display = "flex";
     }
+
+    function confirmDelete() {
+    if (confirm("Are you sure you want to delete this task?")) {
+        document.getElementById("deleteForm").submit();
+    }
+}
 
     function openAddModal(dateObj, hour) {
     const modal = document.getElementById('task-modal');
@@ -1838,5 +1966,7 @@ function closeModal2() {
             }
         });
     });
+
+    
 </script>
 </x-app-layout>

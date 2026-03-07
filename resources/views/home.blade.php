@@ -1321,10 +1321,7 @@
             </div>
 
             <div class="modal-row">
-                <div class="input-group">
-                    <label>Assignee</label>
-                    <input type="text" name="assignee" id="taskAssignee">
-                </div>
+                
                 <div class="input-group">
                     <label>Due Date</label>
                     <input type="date" name="due_date" id="taskDueDate">
@@ -1636,7 +1633,7 @@ function updateSubtasksUI(subtasks, taskId) {
 
         // Clear fields
         document.getElementById("taskTitle").value = "";
-        document.getElementById("taskAssignee").value = "";
+        
         document.getElementById("taskDueDate").value="{{ now()->format('Y-m-d') }}"; 
         document.getElementById("taskPriority").value = "medium";
         
@@ -1657,7 +1654,7 @@ function updateSubtasksUI(subtasks, taskId) {
         // Fill fields
         document.getElementById("taskTitle").value = task.title;
         document.getElementById("taskDescription").value = task.description || "";
-        document.getElementById("taskAssignee").value = task.assignee || "";
+        
         document.getElementById("taskDueDate").value = task.due_date || "";
         document.getElementById("taskPriority").value = task.priority;
         document.getElementById("taskPoints").value = task.points || "0";
