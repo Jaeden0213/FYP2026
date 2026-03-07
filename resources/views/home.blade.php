@@ -966,10 +966,10 @@
                 <span class="sidebar-text">Home</span>
                 <span class="icon-tooltip">Home</span>
             </a>
-            <a href="#">
-                <span class="sidebar-icon">🧠</span>
-                <span class="sidebar-text">Brain</span>
-                <span class="icon-tooltip">Brain</span>
+            <a href="{{ route('tasks.index') }}" id="listViewBtn">
+                <span class="sidebar-icon">📋</span>
+                <span class="sidebar-text">List View</span>
+                <span class="icon-tooltip">List View</span>
             </a>
             <a href="{{ route('tasks.calendar') }}">
                 <span class="sidebar-icon">📅</span>
@@ -1180,7 +1180,7 @@
                                 </span>
                                 
                                     <span id="points-{{ $subtask->id }}" class="subtask-points" data-points = "{{$subtask->points }}" >
-                                        +{{ $subtask->points == 0 ? 'keke takde' : $subtask->points }}
+                                        +{{ $subtask->points == 0 ? 'AI calculating points ....' : $subtask->points }}
                                     </span>
                                 
                                 <form action="{{ route('subtasks.destroy', $subtask->id) }}" method="POST"

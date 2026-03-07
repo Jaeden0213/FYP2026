@@ -83,11 +83,12 @@ public function index(Request $request)
     return view('home', compact('tasksGrouped', 'groupBy', 'date', 'sort', 'statusFilter'));
 }
 
-// In app/Http/Controllers/TaskController.php
+
 public function calendar(Request $request)
 {
     // Get all tasks for the calendar (or apply filters if needed)
     $tasks = Task::with('subtasks')
+    ->where('user_id', auth()->id())
         ->when($request->date, function ($query, $date) {
             // Filter by selected date if provided
             return $query->whereDate('due_date', $date);

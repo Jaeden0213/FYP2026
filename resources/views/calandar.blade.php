@@ -1065,15 +1065,15 @@
                 <span class="sidebar-text">Home</span>
                 <span class="icon-tooltip">Home</span>
             </a>
-            <a href="#" class="active">
-                <span class="sidebar-icon">📅</span>
-                <span class="sidebar-text">Calendar</span>
-                <span class="icon-tooltip">Calendar</span>
-            </a>
-            <a href="#" id="listViewBtn">
+            <a href="{{ route('tasks.index') }}" id="listViewBtn">
                 <span class="sidebar-icon">📋</span>
                 <span class="sidebar-text">List View</span>
                 <span class="icon-tooltip">List View</span>
+            </a>
+            <a href="{{ route('tasks.calendar') }}">
+                <span class="sidebar-icon">📅</span>
+                <span class="sidebar-text">Planner</span>
+                <span class="icon-tooltip">Planner</span>
             </a>
             <a href="{{ route('notifications.index') }}">
                 <span class="sidebar-icon">🔔</span>
@@ -1082,7 +1082,7 @@
             </a>
             <a href="#">
                 <span class="sidebar-icon">⚙️</span>
-                <span class="sidebar-text">Settings</span>
+                <span class="sidebar-text"></span>
                 <span class="sidebar-tooltip">Settings</span>
             </a>
         </div>
@@ -1093,10 +1093,7 @@
         <!-- Toolbar -->
         <div class="toolbar">
             <h1>Calendar View</h1>
-            <div class="view-toggle">
-                <button id="listViewToggle">📋 List</button>
-                <button id="calendarViewToggle" class="active">📅 Calendar</button>
-            </div>
+            
             <div class="toolbar-actions">
                 <button type="button" onclick="openCreateModal()">+ Add Task</button> 
             </div>
@@ -1310,13 +1307,13 @@
         });// if active class is not there, add it, if its there, remove it. so no need if else
 
         // View toggle buttons
-        document.getElementById('listViewToggle').addEventListener('click', function() {
-            window.location.href = "{{ route('tasks.index') }}?view=list";
-        });
+        //document.getElementById('listViewToggle').addEventListener('click', function() {
+       //     window.location.href = "{{ route('tasks.index') }}?view=list";
+       // });
 
-        document.getElementById('calendarViewToggle').addEventListener('click', function() {
+       // document.getElementById('calendarViewToggle').addEventListener('click', function() {
             // Already on calendar view
-        });
+      //  });
 
         document.getElementById('listViewBtn').addEventListener('click', function(e) {
             e.preventDefault();
