@@ -11,6 +11,9 @@ use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\AiTaskController; 
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\RewardController;
+
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -87,6 +90,8 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/store', [StoreController::class, 'index'])->name('store.index');
     Route::post('/store/redeem/{id}', [StoreController::class, 'redeem'])->name('store.redeem');
     Route::get('/store/pomodoro', function () {return view('store.pomodoro');})->name('store.pomodoro');
+    Route::post('/rewards/use/{id}', [RewardController::class, 'useVoucher'])->name('rewards.use');
+    Route::post('/inventory/use-voucher/{id}', [RewardController::class, 'useVoucher'])->name('inventory.useVoucher');
 
     //NOTIFICATIONS
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -100,6 +105,11 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/analytics/charts-data', [AnalyticsController::class, 'chartsData'])->name('analytics.chartsData');
     Route::get('/analytics/insights-data', [AnalyticsController::class, 'insightsData'])->name('analytics.insightsData');
 
+    // ACHIEVEMENTS
+    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
+    Route::post('/achievements/{userAchievementTier}/claim', [AchievementController::class, 'claim'])->name('achievements.claim');
+    Route::post('/achievements/{userAchievementTier}/equip-title', [AchievementController::class, 'equipTitle'])->name('achievements.equipTitle');
+    Route::post('/achievements/unequip-title', [AchievementController::class, 'unequipTitle'])->name('achievements.unequipTitle');
 });
 
 Route::get('/inventory', [StoreController::class, 'inventory'])->name('inventory.index');
@@ -167,6 +177,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::patch('/rewards/{item}/stock/inc', [AdminController::class, 'stockInc'])->name('admin.rewards.stock.inc');
     Route::patch('/rewards/{item}/stock/dec', [AdminController::class, 'stockDec'])->name('admin.rewards.stock.dec');
 
+    // ACHIEVEMENTS
+    Route::get('/achievements', [AdminController::class, 'achievementsIndex'])->name('admin.achievements.index');
+    Route::get('/achievements/create', [AdminController::class, 'achievementsCreate'])->name('admin.achievements.create');
+    Route::post('/achievements', [AdminController::class, 'achievementsStore'])->name('admin.achievements.store');
+
+    Route::get('/achievements/add', [AdminController::class, 'achievementsCreate'])->name('admin.addAchievement');
+
+    Route::get('/achievements/{achievement}/edit', [AdminController::class, 'achievementsEdit'])->name('admin.achievements.edit');
+    Route::put('/achievements/{achievement}', [AdminController::class, 'achievementsUpdate'])->name('admin.achievements.update');
+    Route::delete('/achievements/{achievement}', [AdminController::class, 'achievementsDestroy'])->name('admin.achievements.destroy');
+
+    Route::patch('/achievements/{achievement}/toggle', [AdminController::class, 'achievementsToggle'])->name('admin.achievements.toggle');
 
 });
 

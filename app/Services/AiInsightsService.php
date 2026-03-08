@@ -14,14 +14,14 @@ class AiInsightsService
     {
         // Keep stats small and clean (AI works better)
         $payload = [
-            'ame' => $stats['student_name'] ?? null,
+            'name' => $stats['student_name'] ?? null,
             'datestudent_n_range' => $stats['range'] ?? null,
             'kpis' => $stats['kpis'] ?? null,
             'overdue' => $stats['overdue'] ?? null,
             'behaviour' => $stats['behaviour'] ?? null,
         ];
 //to do do better analysis, separate into two sections: 1) performance (kpis, trends) 2) behaviour (daily/weekly summaries) 3) Solution based on my behaviour (eg if I procrastinate a lot, recommend using reminders more often)
-        $prompt = "
+$prompt = "
 You are a supportive productivity coach inside a student productivity web application.
 
 The system helps students manage their productivity using these features:
@@ -31,29 +31,43 @@ The system helps students manage their productivity using these features:
 - Gamification Points and Progress Tracking
 
 TASK:
-Generate ONE personalised insight and recommendation for the student based on the analytics data.
+Generate ONE structured analysis for the student based on the analytics data.
 
-Guidelines:
-- Start with a short positive acknowledgement of the student's effort or progress.
-- If the student completed many tasks, praise their consistency or discipline.
-- If progress is lower, encourage improvement in a supportive way.
-- Refer to the student by name once if appropriate.
-- When giving recommendations, relate them to features of the system such as:
-  tasks, subtasks, reminders, analytics dashboard, or points.
-- The insight should help the student understand how to use the system more effectively.
+Your response must contain THREE clearly separated sections in this order:
+
+Performance:
+- Analyse the student's performance using the KPIs and task completion data.
+- Mention patterns such as completion rate, productivity trends, or workload handling.
+
+Behaviour:
+- Describe the student's work behaviour or productivity habits.
+- Examples: disciplined, consistent, improving, procrastinating, deadline-driven, productive at certain hours.
+
+Recommendation:
+- Provide ONE practical recommendation to improve or maintain productivity.
+- The recommendation should reference system features such as tasks, subtasks, reminders, analytics dashboard, or productivity habits.
+
+IMPORTANT RULES:
+- Each section must appear on a NEW LINE.
+- The section titles must be BOLD.
+- Use HTML formatting exactly like this:
+  <strong>Performance:</strong>
+  <strong>Behaviour:</strong>
+  <strong>Recommendation:</strong>
+- Each section should contain 1–2 sentences.
+- Do NOT invent numbers not present in the data.
 - Do NOT mention AI, models, OpenAI, or system internals.
-- Do NOT invent numbers that are not present in the data.
-- Base the insight only on the provided analytics data.
+- Base everything only on the provided analytics data.
 
 Tone:
-Friendly, motivating, and supportive, like a mentor encouraging a student.
-
+Friendly, constructive, and encouraging, like a mentor analysing a student's productivity.
 
 OUTPUT:
 Return ONLY valid JSON in this EXACT format:
+
 {
   \"insights\": [
-    \"...\"
+    \"<strong>Performance:</strong> ...<br><br><strong>Behaviour:</strong> ...<br><br><strong>Recommendation:</strong> ...\"
   ]
 }
 

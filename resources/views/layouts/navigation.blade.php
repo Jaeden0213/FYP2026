@@ -359,7 +359,23 @@
         color: #9ca3af;
         font-size: 0.8rem;
     }
-
+    /* ===== ACHIEVEMENTS PANEL ===== */
+    .equipped-title-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #e9d5ff;
+    border-radius: 24px;
+    background: #faf5ff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #7c3aed;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1024px) {
         .nav-search {
@@ -492,6 +508,11 @@
             <span class="text">Rewards</span>
         </a>
 
+        <a href="{{ route('admin.achievements.index') }}" class="nav-icon {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
+            <span class="icon">🏅</span>
+            <span class="text">Achievements</span>
+        </a>
+
          <a href="{{ route('admin.appeals') }}" class="nav-icon {{ request()->routeIs('admin.appeals') ? 'active' : '' }}">
             <span class="icon">📜</span>
             <span class="text">User Appeals</span>
@@ -530,14 +551,31 @@
 
      <div style="display:flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid #e5e7eb; border-radius:24px; background:#f9fafb; font-size:0.9rem; font-weight:600; color:#374151;">
             <span>⭐ {{ auth()->user()->totalPoints() }} pts</span>
-            <span style="color:#9ca3af;">|</span>
-            <span>🏅 Lvl {{ auth()->user()->level() }}</span>
         </div>
+    @if(auth()->user()->equipped_title)
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 12px;
+        border:1px solid #e9d5ff;
+        border-radius:24px;
+        background:#faf5ff;
+        font-size:0.85rem;
+        font-weight:600;
+        color:#7c3aed;
+        max-width:220px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    ">
+        <span>🏷️</span>
+        <span>{{ auth()->user()->equipped_title }}</span>
+    </div>
+    @endif
 
-        <button class="notification-btn" onclick="toggleNotifications()">
-            <span class="icon">🔔</span>
-            <span class="notification-badge">3</span>
-        </button>
+
+
     @endif
 
     <!-- Right Side -->
@@ -585,36 +623,7 @@
     </div>
 </div>
 
-<!-- Notifications Panel -->
-<div id="notificationsPanel" class="notification-panel">
-    <div class="notification-header">
-        <h3>Notifications</h3>
-        <button onclick="toggleNotifications()">✕</button>
-    </div>
-    <div class="notification-list">
-        <div class="notification-item">
-            <div class="notification-icon">🎯</div>
-            <div class="notification-content">
-                <p><strong>Task Completed!</strong> You earned 25 points</p>
-                <small>2 minutes ago</small>
-            </div>
-        </div>
-        <div class="notification-item">
-            <div class="notification-icon">⚠️</div>
-            <div class="notification-content">
-                <p><strong>Deadline approaching:</strong> "Finish report" due tomorrow</p>
-                <small>1 hour ago</small>
-            </div>
-        </div>
-        <div class="notification-item">
-            <div class="notification-icon">🏆</div>
-            <div class="notification-content">
-                <p><strong>Level Up!</strong> You've reached Gold Level</p>
-                <small>3 hours ago</small>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 
