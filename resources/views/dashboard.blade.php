@@ -8,7 +8,6 @@
             overflow: hidden;
         }
 
-        /* ===== Main Layout ===== */
         .app-container {
             display: flex;
             height: 100vh;
@@ -16,7 +15,6 @@
             overflow: hidden;
         }
 
-        /* ===== Sidebar ===== */
         .sidebar {
             width: 70px;
             background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
@@ -138,7 +136,6 @@
             font-size: 1.4rem;
         }
 
-        /* ===== Main Content ===== */
         .main-content-area {
             flex: 1;
             display: flex;
@@ -147,7 +144,6 @@
             min-width: 0;
         }
 
-        /* ===== Page Header Strip like Voucher Store ===== */
         .page-header-strip {
             background: white;
             border-bottom: 1px solid #e5e7eb;
@@ -166,7 +162,6 @@
             background-clip: text;
         }
 
-        /* ===== Scroll Area ===== */
         .dashboard-scroll-area {
             flex: 1;
             overflow-y: auto;
@@ -181,7 +176,6 @@
             width: 100%;
         }
 
-        /* ===== Tabs ===== */
         .tabs-row {
             display: flex;
             flex-wrap: wrap;
@@ -217,7 +211,6 @@
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
         }
 
-        /* ===== Filters ===== */
         .filters-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -302,7 +295,6 @@
             border-color: #d1d5db;
         }
 
-        /* ===== KPI Cards ===== */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -331,7 +323,6 @@
             line-height: 1;
         }
 
-        /* ===== Panels ===== */
         .panel {
             background: white;
             border: 1px solid #e5e7eb;
@@ -407,12 +398,42 @@
             font-weight: 700;
         }
 
-        .insight-item br + br {
-            content: "";
-        }
-
         .tab-panel.hidden {
             display: none;
+        }
+
+        /* Historical controls */
+        .hist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hist-week-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+            text-align: center;
+            flex: 1;
+        }
+
+        .hist-nav-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hist-nav-btn:hover {
+            background: #f8fafc;
+            border-color: #d1d5db;
         }
 
         @media (max-width: 1024px) {
@@ -462,11 +483,19 @@
             .btn-reset {
                 width: 100%;
             }
+
+            .hist-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hist-week-label {
+                order: -1;
+            }
         }
     </style>
 
     <div class="app-container">
-        <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
             <button id="sidebarToggle" class="toggle-btn" type="button">
                 <span class="sidebar-icon">☰</span>
@@ -497,7 +526,6 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="main-content-area">
             <div class="page-header-strip">
                 <h1>Analytics</h1>
@@ -506,14 +534,12 @@
             <div class="dashboard-scroll-area">
                 <div class="analytics-scope">
 
-                    {{-- Tabs --}}
                     <div class="tabs-row">
                         <button type="button" data-tab="overview" class="tab-btn active">Overview</button>
                         <button type="button" data-tab="charts" class="tab-btn">Productivity Charts</button>
                         <button type="button" data-tab="insights" class="tab-btn">Insights & Recommendations</button>
                     </div>
 
-                    {{-- Filters --}}
                     <form id="filters" class="filters-grid">
                         <div class="filter-group filter-span-2">
                             <label>From</label>
@@ -552,7 +578,6 @@
                         </div>
                     </form>
 
-                    {{-- OVERVIEW TAB --}}
                     <div id="tab-overview" class="tab-panel">
                         <div class="kpi-grid">
                             <div class="kpi-card">
@@ -599,7 +624,6 @@
                         </div>
                     </div>
 
-                    {{-- CHARTS TAB --}}
                     <div id="tab-charts" class="tab-panel hidden">
                         <div class="panel">
                             <div class="panel-title">Completed vs Pending (Selected Range)</div>
@@ -610,13 +634,19 @@
 
                         <div class="panel">
                             <div class="panel-title">Historical Trends</div>
+
+                            <div class="hist-header">
+                                <button type="button" id="histPrevBtn" class="hist-nav-btn">← Previous Week</button>
+                                <div id="historicalWeekLabel" class="hist-week-label">Loading week...</div>
+                                <button type="button" id="histNextBtn" class="hist-nav-btn">Next Week →</button>
+                            </div>
+
                             <div class="chart-box">
                                 <canvas id="chartHistorical"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    {{-- INSIGHTS TAB --}}
                     <div id="tab-insights" class="tab-panel hidden">
                         <div class="panel">
                             <div class="panel-title">Insights & Recommendations</div>
@@ -655,6 +685,7 @@
         let statusPieInstance = null;
         let cvpChartInstance = null;
         let historicalChartInstance = null;
+        let historicalWeekOffset = 0;
 
         function destroyIfExists(chart) {
             if (chart) chart.destroy();
@@ -793,16 +824,33 @@
                 });
             }
 
+            await loadHistoricalWeek();
+        }
+
+        async function loadHistoricalWeek() {
+            const category = document.querySelector('select[name="category"]').value;
+            const qs = new URLSearchParams();
+
+            qs.set('week_offset', historicalWeekOffset);
+
+            // Optional: still allow category filter to affect historical chart
+            if (category) qs.set('category', category);
+
+            const res = await fetch(`/analytics/historical-week-data?${qs.toString()}`);
+            const json = await res.json();
+
+            document.getElementById('historicalWeekLabel').textContent = json.week_label;
+
             const canvas2 = document.getElementById('chartHistorical');
             if (canvas2) {
                 destroyIfExists(historicalChartInstance);
                 historicalChartInstance = new Chart(canvas2.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: json.historical.weeks,
+                        labels: json.labels,
                         datasets: [{
                             label: 'Completed (Weekly)',
-                            data: json.historical.counts
+                            data: json.counts
                         }]
                     },
                     options: {
@@ -819,36 +867,46 @@
             }
         }
 
-          async function loadInsights() {
-        const loader = document.getElementById('insights_loader');
-        const wrap = document.getElementById('insights_list');
+        document.getElementById('histPrevBtn').addEventListener('click', () => {
+            historicalWeekOffset--;
+            loadHistoricalWeek();
+        });
 
-        wrap.innerHTML = '';
-        loader.style.display = "block";
+        document.getElementById('histNextBtn').addEventListener('click', () => {
+            historicalWeekOffset++;
+            loadHistoricalWeek();
+        });
 
-        try {
-            const qs = getQueryParams();
-            const res = await fetch(`/analytics/insights-data?${qs}`);
-            const json = await res.json();
+        async function loadInsights() {
+            const loader = document.getElementById('insights_loader');
+            const wrap = document.getElementById('insights_list');
 
-            loader.style.display = "none";
+            wrap.innerHTML = '';
+            loader.style.display = "block";
 
-            json.insights.forEach(msg => {
-                const item = document.createElement('div');
-                item.className = "insight-item";
-                item.innerHTML = msg; // IMPORTANT: render HTML, not plain text
-                wrap.appendChild(item);
-            });
-        } catch (error) {
-            loader.style.display = "none";
-            wrap.innerHTML = `
-                <div class="insight-item">
-                    Unable to load insights right now.
-                </div>
-            `;
-            console.error(error);
+            try {
+                const qs = getQueryParams();
+                const res = await fetch(`/analytics/insights-data?${qs}`);
+                const json = await res.json();
+
+                loader.style.display = "none";
+
+                json.insights.forEach(msg => {
+                    const item = document.createElement('div');
+                    item.className = "insight-item";
+                    item.innerHTML = msg;
+                    wrap.appendChild(item);
+                });
+            } catch (error) {
+                loader.style.display = "none";
+                wrap.innerHTML = `
+                    <div class="insight-item">
+                        Unable to load insights right now.
+                    </div>
+                `;
+                console.error(error);
+            }
         }
-    }
 
         setActiveTab('overview');
     </script>

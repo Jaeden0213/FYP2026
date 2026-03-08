@@ -79,4 +79,15 @@ class AnalyticsController extends Controller
             'insights' => $insights
         ]);
     }
+
+    public function historicalWeekData(Request $request)
+{
+    $userId = auth()->id();
+    $weekOffset = (int) $request->query('week_offset', 0);
+    $category = $request->query('category');
+
+    return response()->json(
+        $this->service->historicalWeekView($userId, $weekOffset, $category)
+    );
+}
 }

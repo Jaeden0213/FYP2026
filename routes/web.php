@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::get('/analytics/overview-data', [AnalyticsController::class, 'overviewData'])->name('analytics.overviewData');
     Route::get('/analytics/charts-data', [AnalyticsController::class, 'chartsData'])->name('analytics.chartsData');
     Route::get('/analytics/insights-data', [AnalyticsController::class, 'insightsData'])->name('analytics.insightsData');
+    Route::get('/analytics/historical-week-data', [AnalyticsController::class, 'historicalWeekData'])->name('analytics.historicalWeekData');
 
     // ACHIEVEMENTS
     Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
