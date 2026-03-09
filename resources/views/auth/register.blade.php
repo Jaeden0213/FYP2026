@@ -38,6 +38,7 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* Decorative Elements */
@@ -77,19 +78,6 @@
         .register-subtitle {
             color: #718096;
             font-size: 16px;
-            font-weight: 400;
-        }
-
-        /* Session Status */
-        .session-status {
-            background: linear-gradient(90deg, #ebf8ff, #bee3f8);
-            border-left: 4px solid #3182ce;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 32px;
-            color: #2c5282;
-            font-size: 14px;
-            font-weight: 500;
         }
 
         /* Form */
@@ -99,17 +87,10 @@
             gap: 24px;
         }
 
-        /* Form Groups */
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
-        }
-
-        .form-label-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .form-label {
@@ -120,23 +101,11 @@
             letter-spacing: 0.5px;
         }
 
-        .login-link {
-            color: #3b82f6;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .login-link:hover {
-            color: #1d4ed8;
-            text-decoration: underline;
-        }
-
         /* Input Container */
         .input-container {
             position: relative;
             width: 100%;
+            transition: transform 0.2s ease;
         }
 
         .input-icon {
@@ -155,7 +124,6 @@
             transition: color 0.3s ease;
         }
 
-        /* Form Input */
         .form-input {
             width: 100%;
             padding: 18px 20px 18px 56px;
@@ -165,7 +133,6 @@
             background: white;
             color: #2d3748;
             transition: all 0.3s ease;
-            font-weight: 400;
         }
 
         .form-input:focus {
@@ -178,11 +145,7 @@
             color: #10b981;
         }
 
-        .form-input::placeholder {
-            color: #a0aec0;
-        }
-
-        /* Password Strength Indicator */
+        /* Password Strength UI */
         .password-strength {
             margin-top: 8px;
         }
@@ -192,55 +155,54 @@
             background: #e2e8f0;
             border-radius: 3px;
             overflow: hidden;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .strength-fill {
             height: 100%;
             width: 0%;
             background: #ef4444;
-            border-radius: 3px;
-            transition: all 0.3s ease;
+            transition: width 0.4s ease, background-color 0.4s ease;
         }
 
         .strength-text {
             font-size: 12px;
-            color: #6b7280;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
         .strength-requirements {
-            margin-top: 12px;
             padding: 12px;
             background: #f9fafb;
             border-radius: 8px;
-            border-left: 3px solid #10b981;
+            border-left: 3px solid #cbd5e0;
         }
 
         .requirements-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 8px;
+            text-transform: uppercase;
         }
 
         .requirements-list {
             list-style: none;
-            padding-left: 0;
         }
 
         .requirement-item {
             font-size: 12px;
-            color: #6b7280;
+            color: #718096;
             margin-bottom: 4px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            transition: color 0.3s ease;
         }
 
         .requirement-item::before {
-            content: "•";
-            color: #9ca3af;
+            content: '○';
+            font-weight: bold;
         }
 
         .requirement-item.valid {
@@ -248,102 +210,10 @@
         }
 
         .requirement-item.valid::before {
-            content: "✓";
-            color: #10b981;
-        }
-
-        /* Error Messages */
-        .error-messages {
-            color: #e53e3e;
-            font-size: 14px;
-            margin-top: 6px;
-            list-style: none;
-            background: #fff5f5;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid #e53e3e;
-        }
-
-        .error-messages li {
-            margin-bottom: 4px;
-        }
-
-        .error-messages li:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Terms and Conditions */
-        .terms-container {
-            margin-top: 8px;
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .terms-checkbox-container {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .terms-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .terms-checkbox:checked {
-            background-color: #10b981;
-            border-color: #10b981;
-        }
-
-        .terms-checkbox:checked::after {
             content: '✓';
-            position: absolute;
-            color: white;
-            font-size: 14px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .terms-label {
-            color: #4a5568;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-
-        .terms-text {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        .terms-link {
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .terms-link:hover {
-            text-decoration: underline;
         }
 
         /* Register Button */
-        .button-container {
-            margin-top: 16px;
-        }
-
         .register-button {
             width: 100%;
             padding: 18px;
@@ -354,92 +224,24 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            letter-spacing: 0.5px;
             text-transform: uppercase;
+            margin-top: 10px;
         }
 
-        .register-button:hover {
+        .register-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
 
-        .register-button:active {
-            transform: translateY(0);
-        }
-
         .register-button:disabled {
-            opacity: 0.6;
+            background: #cbd5e0;
             cursor: not-allowed;
-            transform: none;
             box-shadow: none;
         }
 
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 32px 0;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
-        }
-
-        .divider-text {
-            padding: 0 20px;
-            color: #a0aec0;
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Social Login */
-        .social-container {
-            margin-bottom: 32px;
-        }
-
-        .social-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .social-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 14px;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            color: #4a5568;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .social-button:hover {
-            background: #f8fafc;
-            border-color: #10b981;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .social-icon {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Login Link Container */
+        /* Footer */
         .login-container {
             text-align: center;
             margin-top: 32px;
@@ -447,467 +249,205 @@
             border-top: 1px solid #e2e8f0;
         }
 
-        .login-text {
-            color: #718096;
-            font-size: 15px;
-        }
-
         .login-cta-link {
             color: #3b82f6;
             font-weight: 600;
             text-decoration: none;
-            margin-left: 8px;
-            transition: all 0.3s ease;
-            position: relative;
         }
 
-        .login-cta-link:hover {
-            color: #1d4ed8;
-        }
-
-        .login-cta-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            transition: width 0.3s ease;
-        }
-
-        .login-cta-link:hover::after {
-            width: 100%;
-        }
-
-        /* Animations */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .register-card {
-                padding: 40px;
-                border-radius: 20px;
-            }
-
-            .register-title {
-                font-size: 24px;
-            }
-
-            .form-input {
-                padding: 16px 16px 16px 52px;
-            }
-
-            .social-buttons {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 16px;
-                background: #667eea;
-            }
-
-            .register-card {
-                padding: 32px 24px;
-                border-radius: 16px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            }
-
-            .register-header {
-                margin-bottom: 32px;
-            }
-
-            .register-title {
-                font-size: 22px;
-            }
-
-            .register-subtitle {
-                font-size: 14px;
-            }
-
-            .form-input {
-                padding: 14px 14px 14px 48px;
-                font-size: 15px;
-            }
-
-            .register-button {
-                padding: 16px;
-                font-size: 15px;
-            }
-
-            .divider-text {
-                padding: 0 16px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .register-card {
-                padding: 24px 20px;
-            }
-
-            .form-label-container {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .login-link {
-                align-self: flex-start;
-            }
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
 <body>
     <div class="register-page">
         <div class="register-card">
-            <!-- Header -->
             <div class="register-header">
-                <div class="register-logo">LOGO</div>
+                <div class="register-logo">YOURAPP</div>
                 <h1 class="register-title">Create Account</h1>
                 <p class="register-subtitle">Join our community today</p>
             </div>
 
-            <!-- Session Status -->
-            @if(session('status'))
-                <div class="session-status">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            <!-- Register Form -->
             <form method="POST" action="{{ route('register') }}" class="register-form" id="registerForm">
                 @csrf
 
-                <!-- Name -->
                 <div class="form-group">
-                    <div class="form-label-container">
-                        <label for="name" class="form-label">Full Name</label>
-                    </div>
-                    <div class="input-container">
-                        <div class="input-icon">
-                            <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
-                        <input id="name" class="form-input" 
-                               type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" 
-                               placeholder="John Doe" />
-                    </div>
-                    @if($errors->has('name'))
-                        <ul class="error-messages">
-                            @foreach($errors->get('name') as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+    <label for="name" class="form-label">Full Name</label>
+    <div class="input-container">
+        <div class="input-icon">
+            <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        </div>
+        <input id="name" class="form-input @error('name') is-invalid @enderror" type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="John Doe" />
+    </div>
+    @error('name')
+        <span class="error-text" style="color: #ef4444; font-size: 12px; margin-top: 5px; font-weight: 600;">{{ $message }}</span>
+    @enderror
+</div>
 
-                <!-- Email Address -->
                 <div class="form-group">
-                    <div class="form-label-container">
-                        <label for="email" class="form-label">Email Address</label>
-                    </div>
-                    <div class="input-container">
-                        <div class="input-icon">
-                            <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                            </svg>
-                        </div>
-                        <input id="email" class="form-input" 
-                               type="email" name="email" value="{{ old('email') }}" required autocomplete="email" 
-                               placeholder="you@example.com" />
-                    </div>
-                    @if($errors->has('email'))
-                        <ul class="error-messages">
-                            @foreach($errors->get('email') as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+    <label for="email" class="form-label">Email Address</label>
+    <div class="input-container">
+        <div class="input-icon">
+            <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+            </svg>
+        </div>
+        <input id="email" class="form-input @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}" required placeholder="you@example.com" />
+    </div>
+    @error('email')
+        <span class="error-text" style="color: #ef4444; font-size: 12px; margin-top: 5px; font-weight: 600;">
+            {{ $message }} </span>
+    @enderror
+</div>
 
-                <!-- Password -->
                 <div class="form-group">
-                    <div class="form-label-container">
-                        <label for="password" class="form-label">Password</label>
-                    </div>
+                    <label for="password" class="form-label">Password</label>
                     <div class="input-container">
                         <div class="input-icon">
                             <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
-                        <input id="password" class="form-input"
-                               type="password" name="password" required autocomplete="new-password" 
-                               placeholder="••••••••" />
+                        <input id="password" class="form-input" type="password" name="password" required placeholder="••••••••" />
                     </div>
-                
-                    
-                    @if($errors->has('password'))
-                        <ul class="error-messages">
-                            @foreach($errors->get('password') as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
+
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div id="strengthFill" class="strength-fill"></div>
+                        </div>
+                        <div id="strengthText" class="strength-text" style="color: #ef4444;">Too short</div>
+                        
+                        <div class="strength-requirements">
+                            <p class="requirements-title">Security Check:</p>
+                            <ul class="requirements-list">
+                                <li id="reqLength" class="requirement-item">Min. 8 characters</li>
+                                <li id="reqUppercase" class="requirement-item">Uppercase (A-Z)</li>
+                                <li id="reqLowercase" class="requirement-item">Lowercase (a-z)</li>
+                                <li id="reqNumber" class="requirement-item">Number (0-9)</li>
+                                <li id="reqSpecial" class="requirement-item">Symbol (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Confirm Password -->
                 <div class="form-group">
-                    <div class="form-label-container">
-                        <label for="password_confirmation" class="form-label">Confirm Password</label>
-                    </div>
+                    <label for="password_confirmation" class="form-label">Confirm Password</label>
                     <div class="input-container">
                         <div class="input-icon">
                             <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <input id="password_confirmation" class="form-input"
-                               type="password" name="password_confirmation" required autocomplete="new-password" 
-                               placeholder="••••••••" />
+                        <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required placeholder="••••••••" />
                     </div>
-                    <div id="passwordMatch" class="strength-text" style="color: #10b981; display: none;">✓ Passwords match</div>
-                    <div id="passwordMismatch" class="strength-text" style="color: #ef4444; display: none;">✗ Passwords do not match</div>
-                    
-                    @if($errors->has('password_confirmation'))
-                        <ul class="error-messages">
-                            @foreach($errors->get('password_confirmation') as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
+                    <div id="passwordMatch" class="strength-text" style="color: #10b981; display: none; margin-top: 8px;">✓ Passwords match</div>
+                    <div id="passwordMismatch" class="strength-text" style="color: #ef4444; display: none; margin-top: 8px;">✗ Passwords do not match</div>
                 </div>
 
-                
-
-                <!-- Register Button -->
-                <div class="button-container">
-                    <button type="submit" class="register-button" id="registerButton">
-                        Create Account
-                    </button>
-                </div>
+                <button type="submit" class="register-button" id="registerButton" disabled>
+                    Complete Security Check
+                </button>
             </form>
 
-            
-
-           
-
-            <!-- Login Link -->
             <div class="login-container">
                 <p class="login-text">
                     Already have an account?
-                    <a href="{{ route('login') }}" class="login-cta-link">
-                        Sign in
-                    </a>
+                    <a href="{{ route('login') }}" class="login-cta-link">Sign in</a>
                 </p>
             </div>
         </div>
     </div>
 
     <script>
-        // Password Strength Calculator
-        function calculatePasswordStrength(password) {
-            let strength = 0;
-            const requirements = {
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                lowercase: /[a-z]/.test(password),
-                number: /\d/.test(test(password),
-                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('password_confirmation');
+        const registerButton = document.getElementById('registerButton');
+
+        function updateComplexity() {
+            const val = passwordInput.value;
+            const checks = {
+                length: val.length >= 8,
+                upper: /[A-Z]/.test(val),
+                lower: /[a-z]/.test(val),
+                num: /[0-9]/.test(val),
+                spec: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val)
             };
 
-            // Update requirement indicators
-            document.getElementById('reqLength').className = requirements.length ? 'requirement-item valid' : 'requirement-item';
-            document.getElementById('reqUppercase').className = requirements.uppercase ? 'requirement-item valid' : 'requirement-item';
-            document.getElementById('reqLowercase').className = requirements.lowercase ? 'requirement-item valid' : 'requirement-item';
-            document.getElementById('reqNumber').className = requirements.number ? 'requirement-item valid' : 'requirement-item';
-            document.getElementById('reqSpecial').className = requirements.special ? 'requirement-item valid' : 'requirement-item';
+            // Update UI Checklist
+            document.getElementById('reqLength').className = checks.length ? 'requirement-item valid' : 'requirement-item';
+            document.getElementById('reqUppercase').className = checks.upper ? 'requirement-item valid' : 'requirement-item';
+            document.getElementById('reqLowercase').className = checks.lower ? 'requirement-item valid' : 'requirement-item';
+            document.getElementById('reqNumber').className = checks.num ? 'requirement-item valid' : 'requirement-item';
+            document.getElementById('reqSpecial').className = checks.spec ? 'requirement-item valid' : 'requirement-item';
 
-            // Calculate strength score
-            strength += requirements.length ? 20 : 0;
-            strength += requirements.uppercase ? 20 : 0;
-            strength += requirements.lowercase ? 20 : 0;
-            strength += requirements.number ? 20 : 0;
-            strength += requirements.special ? 20 : 0;
+            // Calculate score
+            const passedCount = Object.values(checks).filter(Boolean).length;
+            const score = (passedCount / 5) * 100;
+            
+            const fill = document.getElementById('strengthFill');
+            const text = document.getElementById('strengthText');
+            fill.style.width = score + "%";
 
-            // Update strength meter
-            const strengthFill = document.getElementById('strengthFill');
-            const strengthText = document.getElementById('strengthText');
-            
-            strengthFill.style.width = `${strength}%`;
-            
-            if (strength < 40) {
-                strengthFill.style.backgroundColor = '#ef4444';
-                strengthText.textContent = 'Password strength: Very weak';
-                strengthText.style.color = '#ef4444';
-            } else if (strength < 60) {
-                strengthFill.style.backgroundColor = '#f59e0b';
-                strengthText.textContent = 'Password strength: Weak';
-                strengthText.style.color = '#f59e0b';
-            } else if (strength < 80) {
-                strengthFill.style.backgroundColor = '#3b82f6';
-                strengthText.textContent = 'Password strength: Good';
-                strengthText.style.color = '#3b82f6';
-            } else if (strength < 100) {
-                strengthFill.style.backgroundColor = '#10b981';
-                strengthText.textContent = 'Password strength: Strong';
-                strengthText.style.color = '#10b981';
+            if (score <= 20) {
+                fill.style.backgroundColor = '#ef4444';
+                text.textContent = "Very Weak";
+                text.style.color = '#ef4444';
+            } else if (score <= 60) {
+                fill.style.backgroundColor = '#f59e0b';
+                text.textContent = "Weak";
+                text.style.color = '#f59e0b';
+            } else if (score <= 80) {
+                fill.style.backgroundColor = '#3b82f6';
+                text.textContent = "Good";
+                text.style.color = '#3b82f6';
             } else {
-                strengthFill.style.backgroundColor = '#10b981';
-                strengthText.textContent = 'Password strength: Very strong';
-                strengthText.style.color = '#10b981';
-                strengthFill.style.animation = 'pulse 2s infinite';
+                fill.style.backgroundColor = '#10b981';
+                text.textContent = "Strong Password";
+                text.style.color = '#10b981';
             }
+
+            return passedCount === 5;
         }
 
-        // Password Match Checker
-        function checkPasswordMatch() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('password_confirmation').value;
-            const matchElement = document.getElementById('passwordMatch');
-            const mismatchElement = document.getElementById('passwordMismatch');
-            
-            if (confirmPassword.length === 0) {
-                matchElement.style.display = 'none';
-                mismatchElement.style.display = 'none';
-                return;
-            }
-            
-            if (password === confirmPassword) {
-                matchElement.style.display = 'block';
-                mismatchElement.style.display = 'none';
-            } else {
-                matchElement.style.display = 'none';
-                mismatchElement.style.display = 'block';
-            }
-        }
-
-        // Form Validation
         function validateForm() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('password_confirmation').value;
-            const termsChecked = document.getElementById('terms').checked;
-            const button = document.getElementById('registerButton');
+            const isComplex = updateComplexity();
+            const passwordsMatch = passwordInput.value === confirmInput.value && confirmInput.value !== "";
             
-            // Check if passwords match
-            if (password !== confirmPassword) {
-                button.disabled = true;
-                button.textContent = 'Passwords must match';
-                return false;
+            // Show/Hide match text
+            if (confirmInput.value !== "") {
+                document.getElementById('passwordMatch').style.display = passwordsMatch ? 'block' : 'none';
+                document.getElementById('passwordMismatch').style.display = passwordsMatch ? 'none' : 'block';
             }
-            
-            // Check terms
-            if (!termsChecked) {
-                button.disabled = true;
-                button.textContent = 'Accept terms to continue';
-                return false;
+
+            if (isComplex && passwordsMatch) {
+                registerButton.disabled = false;
+                registerButton.textContent = "Create Account";
+                registerButton.style.animation = "pulse 2s infinite";
+            } else {
+                registerButton.disabled = true;
+                registerButton.style.animation = "none";
+                if (!isComplex) registerButton.textContent = "Password Too Weak";
+                else if (!passwordsMatch) registerButton.textContent = "Passwords Must Match";
             }
-            
-            // Enable button
-            button.disabled = false;
-            button.textContent = 'Create Account';
-            return true;
         }
 
-        // Initialize event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Password strength
-            const passwordInput = document.getElementById('password');
-            passwordInput.addEventListener('input', function() {
-                calculatePasswordStrength(this.value);
-                checkPasswordMatch();
-                validateForm();
-            });
-            
-            // Confirm password
-            const confirmInput = document.getElementById('password_confirmation');
-            confirmInput.addEventListener('input', function() {
-                checkPasswordMatch();
-                validateForm();
-            });
-            
-            // Terms checkbox
-            const termsCheckbox = document.getElementById('terms');
-            termsCheckbox.addEventListener('change', validateForm);
-            
-            // Form submission animation
-            const form = document.getElementById('registerForm');
-            form.addEventListener('submit', function(e) {
-                if (!validateForm()) {
-                    e.preventDefault();
-                    return;
-                }
-                
-                const button = this.querySelector('.register-button');
-                button.innerHTML = '<span style="display: inline-block; animation: spin 1s linear infinite;">⟳</span> Creating Account...';
-                button.style.opacity = '0.8';
-                button.disabled = true;
-                
-                // Add spin animation
-                const style = document.createElement('style');
-                style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-                document.head.appendChild(style);
-            });
-            
-            // Card hover effect
-            const card = document.querySelector('.register-card');
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
-                this.style.boxShadow = '0 25px 80px rgba(0, 0, 0, 0.2)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.15)';
-            });
-            
-            // Input focus effects
-            const inputs = document.querySelectorAll('.form-input');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'scale(1.01)';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'scale(1)';
-                });
-            });
+        passwordInput.addEventListener('input', validateForm);
+        confirmInput.addEventListener('input', validateForm);
+
+        // Visual effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', () => input.parentElement.style.transform = 'scale(1.02)');
+            input.addEventListener('blur', () => input.parentElement.style.transform = 'scale(1)');
         });
     </script>
 </body>

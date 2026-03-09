@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified', 'suspend'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/tasks/{task}/rollover', [TaskController::class, 'rollover'])->name('tasks.rollover');
     
 
     //SUBTASKS

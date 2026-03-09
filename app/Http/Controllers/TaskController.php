@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TaskStatusMail;
 use App\Models\User;
 use App\Models\Notification;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -166,6 +167,31 @@ public function calendar(Request $request)
 
 
 
+public function rollover(Task $task)
+{
+    if ($task->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    DB::transaction(function () use ($task) {
+        // 1. Create the new version for today
+        $newTask = $task->replicate();
+        $newTask->due_date = now()->toDateString();
+        $newTask->status = 'pending';
+        $newTask->save();
+
+        // 2. Move the incomplete subtasks to the new task
+        // We update the task_id directly rather than replicating 
+        // because the old task is being deleted anyway!
+        $task->subtasks()->where('status', '!=', 'completed')
+             ->update(['task_id' => $newTask->id]);
+
+        // 3. Goodbye, yesterday!
+        $task->delete();
+    });
+
+    return back()->with('success', 'Task teleported to today!');
+}
 
     // Update task
     public function update(Request $request, $id, GamificationService $gamification)

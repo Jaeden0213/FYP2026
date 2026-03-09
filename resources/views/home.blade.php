@@ -951,6 +951,23 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.btn-rollover {
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.3s ease;
+}
+
+.btn-rollover:hover {
+    background: #667eea;
+}
+
 </style>
 
 <div class="app-container">
@@ -1128,12 +1145,23 @@
                                      <span class="subtask-checkbox">
                                         {{ $task->status === 'completed' ? '☑' : '☐' }}
                                      </span>
-                                    <div class="task-title">
+                                <div class="task-title">
                                         {{ $task->title }} 
-                                        @if($task->status !== 'completed' 
-                                            && $task->due_date 
-                                            && \Carbon\Carbon::parse($task->due_date)->startOfDay()->lt(\Carbon\Carbon::today()))
+
+                                        @php
+                                            $isPast = $task->due_date && \Carbon\Carbon::parse($task->due_date)->startOfDay()->lt(\Carbon\Carbon::today());
+                                        @endphp
+
+                                        @if($task->status !== 'completed' && $isPast)
                                             <span class="overdue-label">⚠️ Incomplete</span>
+                                            
+                                            <form action="{{ route('tasks.rollover', $task) }}" 
+                                                method="POST" 
+                                                style="display: inline;"
+                                                onclick="event.stopPropagation();">
+                                                @csrf
+                                                <button type="submit" class="btn-rollover">🔄 Teleport to Today</button>
+                                            </form>
                                         @endif
                                     </div>
                                     <div class="task-actions">
