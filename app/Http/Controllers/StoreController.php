@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StoreItem;
 use App\Models\Redemption;
+use App\Models\UserAchievementTier;
 use App\Services\StoreService;
 
 class StoreController extends Controller
@@ -30,6 +31,12 @@ class StoreController extends Controller
             ->latest()
             ->get();
 
-        return view('inventory.index', compact('redemptions'));
+        $myAchievements = UserAchievementTier::with('tier.achievement')
+            ->where('user_id', auth()->id())
+            ->where('is_claimed', true)
+            ->latest()
+            ->get();
+
+        return view('inventory.index', compact('redemptions', 'myAchievements'));
     }
 }

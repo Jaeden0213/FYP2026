@@ -13,7 +13,6 @@ class AnalyticsController extends Controller
     // FR17: Page with 3 tabs
     public function index(Request $request)
     {
-        // default tab = overview
         $tab = $request->query('tab', 'overview');
         return view('analytics.index', compact('tab'));
     }
@@ -45,44 +44,50 @@ class AnalyticsController extends Controller
 
     // FR15 FR16
     public function insightsData(Request $request)
+    {
+        $userId = auth()->id();
+        $filters = $this->service->parseFilters($request);
+
+        $summaries = $this->service->dailyWeeklySummary($userId);
+
+        // rule-based insights (fallback)
+        $ruleInsights = $this->service->insights($userId);
+
+        // collect mined analytics stats
+        $stats = [
+            'student_name' => auth()->user()->name,
+            'range' => [
+                'from' => $filters['from']->toDateString(),
+                'to' => $filters['to']->toDateString(),
+            ],
+            'kpis' => $this->service->kpis($userId, $filters),
+            'behaviour' => [
+                'daily_summary' => $summaries['daily'],
+                'weekly_summary' => $summaries['weekly'],
+            ],
+            'last7days' => $this->service->completedLast7Days($userId),
+            'ruleInsights' => $ruleInsights,
+        ];
+
+        // AI insights
+        $ai = AiInsightsService::generateInsights($stats);
+
+        // fallback if AI fails
+        $insights = !empty($ai['insights']) ? $ai['insights'] : $ruleInsights;
+
+        return response()->json([
+            'insights' => $insights
+        ]);
+    }
+
+    public function historicalWeekData(Request $request)
 {
     $userId = auth()->id();
+    $weekOffset = (int) $request->query('week_offset', 0);
+    $category = $request->query('category');
 
-    $filters = $this->service->parseFilters($request);
-
-    // rule-based insights (fallback)
-    $ruleInsights = $this->service->insights($userId);
-
-    // collect mined analytics stats
-    $stats = [
-        'student_name' => auth()->user()->name,
-        'range' => [
-            'from' => $filters['from']->toDateString(),
-            'to' => $filters['to']->toDateString(),
-        ],
-
-        'kpis' => $this->service->kpis($userId, $filters),
-        
-        'behaviour' => [
-            'daily_summary' => $this->service->dailyWeeklySummary($userId)['daily'],
-            'weekly_summary' => $this->service->dailyWeeklySummary($userId)['weekly'],
-        ],
-
-        'last7days' => $this->service->completedLast7Days($userId),
-
-        'ruleInsights' => $ruleInsights
-    ];
-    
-    // AI insights
-    $ai = AiInsightsService::generateInsights($stats);
-
-    // fallback if AI fails
-    $insights = $ai['insights'] ?? $ruleInsights;
-
-    return response()->json([
-        'insights' => $insights
-    ]);
+    return response()->json(
+        $this->service->historicalWeekView($userId, $weekOffset, $category)
+    );
 }
-
-    
 }

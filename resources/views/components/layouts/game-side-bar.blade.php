@@ -56,16 +56,15 @@
                     <span class="icon-tooltip">Store</span>
                 </a>
 
-                <a href="#">
+                <a href="{{ route('achievements.index') }}">
                     <span class="sidebar-icon">🏆</span>
                     <span class="sidebar-text">Achievements</span>
                     <span class="icon-tooltip">Achievements</span>
                 </a>
 
-                <a href="#">
-                    <span class="sidebar-icon">🏅</span>
-                    <span class="sidebar-text">Badges</span>
-                    <span class="icon-tooltip">Badges</span>
+                <a href="{{ route('inventory.index') }}" class="nav-icon {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
+                <span class="icon">🎒</span>
+                <span class="text">Inventory</span>
                 </a>
 
                 <a href="{{ route('store.pomodoro') }}">
@@ -79,7 +78,7 @@
         <!-- Main -->
         <div class="main-content-area">
             <div class="toolbar">
-                <h1>{{ $title ?? 'Gamification' }}</h1>
+                <h1>{{ $title ?? 'Achievements' }}</h1>
             </div>
 
             <div class="page-body">

@@ -981,11 +981,6 @@
                 <span class="sidebar-text">Notifications</span>
                 <span class="icon-tooltip">Notifications</span>
             </a>
-            <a href="#">
-                <span class="sidebar-icon">⚙️</span>
-                <span class="sidebar-text">Settings</span>
-                <span class="icon-tooltip">Settings</span>
-            </a>
         </div>
     </aside>
 
