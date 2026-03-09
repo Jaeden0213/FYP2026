@@ -1876,7 +1876,7 @@ dayTasks.forEach(task => {
 
         // Fill fields
         document.getElementById("taskTitle").value = task.title || "";
-        document.getElementById("taskDescription").value = task.description || "hi";
+        document.getElementById("taskDescription").value = task.description || "";
         
         document.getElementById("taskStartTime").value = task.start_time || "";
         document.getElementById("taskEndTime").value = task.end_time || "";
