@@ -217,6 +217,8 @@
         overflow-y: auto; /* Only this area scrolls */
         padding: 24px;
         background: #f8fafc;
+
+        
     }
 
     /* ===== Side Panel (Calendar) ===== */
@@ -1064,6 +1066,12 @@
             from { width: 100%; }
             to { width: 0%; }
         }
+
+        
+
+        
+
+        
     </style>
 
     <script>
@@ -1121,6 +1129,48 @@
         <div class="main-content-wrapper">
             <!-- Tasks Area -->
             <div class="tasks-area">
+               {{-- Check if the collection is empty --}}
+@if($tasksGrouped->isEmpty())
+    <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; margin-left: auto;">
+    
+        <div class="empty-state-container">
+            <div class="empty-state-visual">
+                <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="120" cy="120" r="100" fill="#EEF2FF" />
+                    <rect x="75" y="70" width="90" height="110" rx="12" fill="white" stroke="#6366f1" stroke-width="4" />
+                    <line x1="95" y1="100" x2="145" y2="100" stroke="#E0E7FF" stroke-width="4" stroke-linecap="round" />
+                    <line x1="95" y1="125" x2="145" y2="125" stroke="#E0E7FF" stroke-width="4" stroke-linecap="round" />
+                    <line x1="95" y1="150" x2="125" y2="150" stroke="#E0E7FF" stroke-width="4" stroke-linecap="round" />
+                    
+                    <!-- Floating stars/elements -->
+                    <circle cx="180" cy="80" r="8" fill="#FCD34D" opacity="0.6">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="60" cy="160" r="6" fill="#60A5FA" opacity="0.5">
+                        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="200" cy="170" r="10" fill="#F472B6" opacity="0.4">
+                        <animate attributeName="r" values="10;12;10" dur="3s" repeatCount="indefinite" />
+                    </circle>
+                    
+                    <!-- Plus sign animation -->
+                    <path d="M160 40L180 60" stroke="#6366f1" stroke-width="4" stroke-linecap="round" stroke-dasharray="5 5">
+                        <animate attributeName="stroke-dashoffset" values="0;20" dur="1s" repeatCount="indefinite" />
+                    </path>
+                    <circle cx="170" cy="50" r="8" fill="#4F46E5" />
+                </svg>
+            </div>
+            
+            <h2 class="empty-state-title">&nbsp;&nbsp;&nbsp; Your workspace is empty! 🌟</h2>
+            
+            
+           
+            
+           
+           
+        </div>
+    </div>
+@else
                 @foreach($tasksGrouped as $group => $tasks)
                     <div class="priority-section">
                         <div class="priority-header">
@@ -1227,6 +1277,7 @@
                         @endforelse
                     </div>
                 @endforeach
+            @endif
             </div>
 
             <!-- Side Panel (Calendar & Filters) -->
@@ -1284,7 +1335,7 @@
                             </div>
                         </div>
                         
-                        <button type="submit">Apply Filters</button>
+                        <button type="submit">Apply Date Filter</button>
                     </form>
                 </div>
             </div>
