@@ -1379,8 +1379,6 @@
                 <option value="exercise">Exercise</option>
                 <option value="study">Study</option>
                 <option value="assignment">Assignment</option>
-                <option value="work">Work</option>
-                <option value="personal">Personal</option>
             </select>
 
             <label>Priority</label>

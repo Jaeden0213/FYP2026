@@ -37,7 +37,7 @@ public function index(Request $request)
 
     // Base query: tasks for this user and selected date
     $query = Task::with('subtasks')->where('user_id', $userId)
-                 ->whereDate('created_at', $date);
+                 ->whereDate('due_date', $date);
 
     // Filter by status
     if ($statusFilter) { //if not null, run this
