@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Appeal;
+use Carbon\Carbon;
+
 
 class AppealController extends Controller
 {
@@ -46,6 +48,8 @@ class AppealController extends Controller
         'user_id' => $userId,
         'description' => $request->description,
         'status' => 'pending',
+        'created_at' => Carbon::now('Asia/Kuala_Lumpur'),
+        'updated_at' => Carbon::now('Asia/Kuala_Lumpur'),
     ]);
     
     \Log::info('Appeal created', ['appeal_id' => $appeal->id ?? 'failed']);

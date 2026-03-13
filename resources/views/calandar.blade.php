@@ -1184,11 +1184,6 @@
                 <span class="sidebar-text">Notifications</span>
                 <span class="icon-tooltip">Notifications</span>
             </a>
-            <a href="#">
-                <span class="sidebar-icon">⚙️</span>
-                <span class="sidebar-text"></span>
-                <span class="sidebar-tooltip">Settings</span>
-            </a>
         </div>
     </aside>
 
@@ -1874,7 +1869,7 @@ dayTasks.forEach(task => {
 
         // Fill fields
         document.getElementById("taskTitle").value = task.title || "";
-        document.getElementById("taskDescription").value = task.description || "hi";
+        document.getElementById("taskDescription").value = task.description || "";
         
         document.getElementById("taskStartTime").value = task.start_time || "";
         document.getElementById("taskEndTime").value = task.end_time || "";

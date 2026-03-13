@@ -19,19 +19,28 @@ class AdminUserSeeder extends Seeder
         'email_verified_at' => now(),
     ]);
 
-    //User::create([
-    //    'name' => 'Jae Den',
+     User::create([
+        'name' => 'tester1',
+        'email' => 'tester1@example.com',
+        'password' => Hash::make('test123'),
+        'role' => 'student',
+        'status' => 'active',
+        'email_verified_at' => now(),
+    ]);
+
+   // User::create([
+   //     'name' => 'Jae Den',
    //     'email' => 'chanjaeden113@gmail.com',
-   //     'password' => Hash::make('Jaeden13!'),
+    //    'password' => Hash::make('Jaeden13!'),
    //     'role' => 'student',
-  //      'status' => 'active',
-  //      'email_verified_at' => now(),
+   //     'status' => 'active',
+   //     'email_verified_at' => now(),
    // ]);
 
 
    for ($i = 4; $i <= 14; $i++) {
     User::create([
-        'name' => 'Tester' . $i,
+     'name' => 'Tester' . $i,
         'email' => "tester{$i}@example.com", // Unique email for each
         'password' => Hash::make('test123'),
         'role' => 'student',

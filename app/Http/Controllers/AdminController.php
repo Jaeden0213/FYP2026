@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Event;
 use App\Models\UserLog;
 use App\Models\User;
 use App\Models\StoreItem;
+use App\Models\Achievement;
+use App\Models\AchievementTier;
 
 use App\Models\Task;
 use Carbon\Carbon;
@@ -296,6 +298,76 @@ public function promoteUser($id){
     {
         return view('admin.adminAddReward');
     }
+
+
+    // ACHIEVEMENTS
+    public function achievementsIndex()
+    {
+        $achievements = Achievement::with('tiers')->latest()->get();
+
+        return view('admin.adminManageAchievement', compact('achievements'));
+    }
+
+    public function achievementsCreate()
+    {
+        return view('admin.adminAddAchievement');
+    }
+
+    public function achievementsStore(Request $request)
+{
+    $validated = $request->validate([
+        'code' => 'required|string|max:255|unique:achievements,code',
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'metric_key' => 'required|string|max:255',
+
+        'tiers' => 'required|array|min:1',
+        'tiers.*.tier' => 'required|in:bronze,silver,gold',
+        'tiers.*.target_value' => 'required|integer|min:1',
+        'tiers.*.reward_points' => 'required|integer|min:0',
+        'tiers.*.reward_title' => 'nullable|string|max:255',
+    ]);
+
+    $achievement = Achievement::create([
+        'code' => $validated['code'],
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'category' => 'general',
+        'icon' => null,
+        'is_active' => $request->boolean('is_active'),
+    ]);
+
+    $tierOrderMap = [
+        'bronze' => 1,
+        'silver' => 2,
+        'gold' => 3,
+    ];
+
+    foreach ($validated['tiers'] as $tierData) {
+        $achievement->tiers()->create([
+            'tier' => $tierData['tier'],
+            'tier_order' => $tierOrderMap[$tierData['tier']],
+            'metric_key' => $validated['metric_key'],
+            'operator' => '>=',
+            'target_value' => $tierData['target_value'],
+            'reward_points' => $tierData['reward_points'],
+            'reward_title' => $tierData['reward_title'] ?? null,
+        ]);
+    }
+
+    if ($request->expectsJson()) {
+        return response()->json([
+            'message' => 'Achievement created successfully!',
+            'redirect' => route('admin.achievements.index'),
+        ]);
+    }
+
+    return redirect()
+        ->route('admin.achievements.index')
+        ->with('success', 'Achievement created successfully.');
+}
+
+
 
 }
 ?>

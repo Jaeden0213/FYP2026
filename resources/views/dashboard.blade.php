@@ -1,59 +1,13 @@
 <x-app-layout>
     <style>
-        /* -------- AI INSIGHTS LOADER -------- */
-        .insights-loader {
-            display: none;
-            text-align: center;
-            padding: 30px 0;
-        }
-
-        .insights-spinner {
-            width: 36px;
-            height: 36px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid #111827;
-            border-radius: 50%;
-            animation: insightsSpin 1s linear infinite;
-            margin: auto;
-        }
-
-        .insights-loader p {
-            margin-top: 10px;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        @keyframes insightsSpin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ===== Toolbar ===== */
-        .toolbar {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            min-height: 64px;
-            box-sizing: border-box;
-            width: 100%;
-        }
-
-        .toolbar h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
+        body, html {
             margin: 0;
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            white-space: nowrap;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            overflow: hidden;
         }
 
-        /* App Container - Fixed layout */
         .app-container {
             display: flex;
             height: 100vh;
@@ -61,7 +15,6 @@
             overflow: hidden;
         }
 
-        /* ===== Sidebar ===== */
         .sidebar {
             width: 70px;
             background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
@@ -74,6 +27,7 @@
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
             z-index: 10;
+            overflow: hidden;
         }
 
         .sidebar.active {
@@ -129,6 +83,7 @@
             white-space: nowrap;
             overflow: hidden;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .sidebar a:hover {
@@ -155,7 +110,6 @@
             opacity: 1;
         }
 
-        /* Tooltip for collapsed sidebar icons */
         .sidebar a .icon-tooltip {
             position: absolute;
             left: 80px;
@@ -182,56 +136,372 @@
             font-size: 1.4rem;
         }
 
-        /* Main Content Area - Fixed */
-        .main-content {
+        .main-content-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            height: 100vh;
+            min-width: 0;
         }
 
-        /* Scrollable content - ONLY THIS SCROLLS */
-        .scrollable-content {
+        .page-header-strip {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 18px 28px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            flex-shrink: 0;
+        }
+
+        .page-header-strip h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-scroll-area {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            overflow-x: hidden;
+            padding: 28px;
+            min-height: 0;
         }
 
-        /* Analytics Scope */
         .analytics-scope {
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
+        }
+
+        .tabs-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            font-size: 0.98rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background: #f5f3ff;
+        }
+
+        .tab-btn.active {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 28px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            height: 52px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            padding: 0 16px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .filter-span-2 {
+            grid-column: span 2;
+        }
+
+        .filter-span-1 {
+            grid-column: span 1;
+        }
+
+        .filter-actions {
+            grid-column: span 6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-apply {
+            padding: 12px 28px;
+            border-radius: 10px;
+            border: none;
+            background: #0f172a;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+        }
+
+        .btn-reset {
+            padding: 12px 28px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reset:hover {
+            background: #f8fafc;
+            border-color: #d1d5db;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .kpi-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #111827;
+        }
+
+        .chart-box {
+            width: 100%;
+            height: 320px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            color: #4b5563;
+            line-height: 1.7;
+            font-size: 0.96rem;
+        }
+
+        .insights-loader {
+            display: none;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .insights-spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #111827;
+            border-radius: 50%;
+            animation: insightsSpin 1s linear infinite;
+            margin: auto;
+        }
+
+        .insights-loader p {
+            margin-top: 10px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @keyframes insightsSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .insight-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px 20px;
+            background: #f8fafc;
+            color: #374151;
+            margin-bottom: 10px;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .insight-item strong {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .tab-panel.hidden {
+            display: none;
+        }
+
+        /* Historical controls */
+        .hist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hist-week-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+            text-align: center;
+            flex: 1;
+        }
+
+        .hist-nav-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hist-nav-btn:hover {
+            background: #f8fafc;
+            border-color: #d1d5db;
+        }
+
+        @media (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-span-2,
+            .filter-span-1 {
+                grid-column: span 1;
+            }
+
+            .filter-actions {
+                grid-column: span 2;
+            }
         }
 
         @media (max-width: 768px) {
             .sidebar {
                 width: 60px;
             }
+
             .sidebar.active {
                 width: 200px;
             }
-            
-            .scrollable-content {
+
+            .dashboard-scroll-area {
                 padding: 16px;
             }
-        }
 
-        /* Keep all your existing styles below */
-        .analytics-scope * { box-sizing: border-box; }
-        .analytics-scope label { display:block; margin-bottom: .25rem; }
-        .analytics-scope input,
-        .analytics-scope select { background:#fff; }
-        .analytics-scope button { font: inherit; }
+            .kpi-grid,
+            .summary-grid,
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                grid-column: span 1;
+                flex-direction: column;
+            }
+
+            .btn-apply,
+            .btn-reset {
+                width: 100%;
+            }
+
+            .hist-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hist-week-label {
+                order: -1;
+            }
+        }
     </style>
 
     <div class="app-container">
-        <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
-            <button id="sidebarToggle" class="toggle-btn">
+            <button id="sidebarToggle" class="toggle-btn" type="button">
                 <span class="sidebar-icon">☰</span>
                 <span class="toggle-btn-text">Workspace</span>
             </button>
+
             <div class="sidebar-content">
                 <a href="/dashboard">
                     <span class="sidebar-icon">🏠</span>
@@ -253,166 +523,143 @@
                     <span class="sidebar-text">Notifications</span>
                     <span class="icon-tooltip">Notifications</span>
                 </a>
-                <a href="#">
-                    <span class="sidebar-icon">⚙️</span>
-                    <span class="sidebar-text">Settings</span>
-                    <span class="icon-tooltip">Settings</span>
-                </a>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Toolbar at the very top (NO SCROLL) -->
-            <div class="toolbar">
-                <h1>Tasks Dashboard</h1>
+        <div class="main-content-area">
+            <div class="page-header-strip">
+                <h1>Analytics</h1>
             </div>
 
-            <!-- Scrollable Content - ONLY THIS SCROLLS -->
-            <div class="scrollable-content">
+            <div class="dashboard-scroll-area">
                 <div class="analytics-scope">
-                    <!-- Rest of your content -->
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">
 
-                            {{-- Tabs --}}
-                            <div class="flex flex-wrap gap-3 mb-6">
-                                <button type="button" data-tab="overview"
-                                    class="tab-btn inline-flex items-center px-6 py-2.5 rounded-full bg-gray-900 text-white border border-gray-900 shadow-sm transition">
-                                    Overview
-                                </button>
-                                <button type="button" data-tab="charts"
-                                    class="tab-btn inline-flex items-center px-6 py-2.5 rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition">
-                                    Productivity Charts
-                                </button>
-                                <button type="button" data-tab="insights"
-                                    class="tab-btn inline-flex items-center px-6 py-2.5 rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition">
-                                    Insights & Recommendations
-                                </button>
+                    <div class="tabs-row">
+                        <button type="button" data-tab="overview" class="tab-btn active">Overview</button>
+                        <button type="button" data-tab="charts" class="tab-btn">Productivity Charts</button>
+                        <button type="button" data-tab="insights" class="tab-btn">Insights & Recommendations</button>
+                    </div>
+
+                    <form id="filters" class="filters-grid">
+                        <div class="filter-group filter-span-2">
+                            <label>From</label>
+                            <input type="date" name="from">
+                        </div>
+
+                        <div class="filter-group filter-span-2">
+                            <label>To</label>
+                            <input type="date" name="to">
+                        </div>
+
+                        <div class="filter-group filter-span-1">
+                            <label>Status</label>
+                            <select name="status">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group filter-span-1">
+                            <label>Category</label>
+                            <select name="category">
+                                <option value="">All</option>
+                                <option value="chores">Chores</option>
+                                <option value="exercise">Exercise</option>
+                                <option value="study">Study</option>
+                                <option value="assignment">Assignment</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button type="submit" class="btn-apply">Apply</button>
+                            <button type="button" id="resetFilters" class="btn-reset">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="tab-overview" class="tab-panel">
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-label">Total Tasks</div>
+                                <div id="kpi_total" class="kpi-value">-</div>
                             </div>
-
-                            {{-- Filters --}}
-                            <form id="filters" class="grid grid-cols-6 gap-4 items-end mb-8">
-                                <div class="col-span-2">
-                                    <label class="block text-sm font-medium text-gray-600">From</label>
-                                    <input type="date" name="from"
-                                        class="mt-1 w-full h-11 border rounded-lg px-3 text-base focus:ring-2 focus:ring-gray-900 focus:border-gray-900">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="block text-sm font-medium text-gray-600">To</label>
-                                    <input type="date" name="to"
-                                        class="mt-1 w-full h-11 border rounded-lg px-3 text-base focus:ring-2 focus:ring-gray-900 focus:border-gray-900">
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-600">Status</label>
-                                    <select name="status"
-                                        class="mt-1 w-full h-11 border rounded-lg px-3 text-base focus:ring-2 focus:ring-gray-900 focus:border-gray-900">
-                                        <option value="">All</option>
-                                        <option value="pending">Pending</option>
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-600">Category</label>
-                                    <select name="category"
-                                        class="mt-1 w-full h-11 border rounded-lg px-3 text-base focus:ring-2 focus:ring-gray-900 focus:border-gray-900">
-                                        <option value="">All</option>
-                                        <option value="chores">Chores</option>
-                                        <option value="exercise">Exercise</option>
-                                        <option value="study">Study</option>
-                                        <option value="assignment">Assignment</option>
-                                    </select>
-                                </div>
-                                <div class="col-span-6 flex justify-end gap-2 mt-2">
-                                    <button type="submit"
-                                        class="h-11 px-6 rounded-lg bg-gray-900 text-white hover:bg-black transition">
-                                        Apply
-                                    </button>
-                                    <button type="button" id="resetFilters"
-                                        class="h-11 px-6 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
-                                        Reset
-                                    </button>
-                                </div>
-                            </form>
-
-                            {{-- Overview Tab --}}
-                            <div id="tab-overview" class="tab-panel">
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                                    <div class="border rounded-xl p-4">
-                                        <div class="text-sm text-gray-500">Total Tasks</div>
-                                        <div id="kpi_total" class="text-2xl font-bold mt-1">-</div>
-                                    </div>
-                                    <div class="border rounded-xl p-4">
-                                        <div class="text-sm text-gray-500">Completed</div>
-                                        <div id="kpi_completed" class="text-2xl font-bold mt-1">-</div>
-                                    </div>
-                                    <div class="border rounded-xl p-4">
-                                        <div class="text-sm text-gray-500">Pending</div>
-                                        <div id="kpi_pending" class="text-2xl font-bold mt-1">-</div>
-                                    </div>
-                                    <div class="border rounded-xl p-4">
-                                        <div class="text-sm text-gray-500">Completion %</div>
-                                        <div id="kpi_pct" class="text-2xl font-bold mt-1">-</div>
-                                    </div>
-                                </div>
-
-                                <div class="border rounded-xl p-4 mb-6">
-                                    <div class="font-semibold mb-2">Task Status Breakdown</div>
-                                    <div class="w-full h-64">
-                                        <canvas id="chartStatusPie"></canvas>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div class="border rounded-xl p-4">
-                                        <div class="font-semibold mb-2">Daily Summary</div>
-                                        <div id="daily_summary" class="text-gray-700">-</div>
-                                    </div>
-                                    <div class="border rounded-xl p-4">
-                                        <div class="font-semibold mb-2">Weekly Summary</div>
-                                        <div id="weekly_summary" class="text-gray-700">-</div>
-                                    </div>
-                                </div>
-
-                                <div class="border rounded-xl p-4">
-                                    <div class="font-semibold mb-2">Completed Tasks (Last 7 Days)</div>
-                                    <div class="w-full h-64">
-                                        <canvas id="chartLast7"></canvas>
-                                    </div>
-                                </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Completed</div>
+                                <div id="kpi_completed" class="kpi-value">-</div>
                             </div>
-
-                            {{-- Charts Tab --}}
-                            <div id="tab-charts" class="tab-panel hidden">
-                                <div class="border rounded-xl p-4 mb-4">
-                                    <div class="font-semibold mb-2">Completed vs Pending (Selected Range)</div>
-                                    <div class="w-full h-72">
-                                        <canvas id="chartCompletedVsPending"></canvas>
-                                    </div>
-                                </div>
-                                <div class="border rounded-xl p-4">
-                                    <div class="font-semibold mb-2">Historical Trends</div>
-                                    <div class="w-full h-72">
-                                        <canvas id="chartHistorical"></canvas>
-                                    </div>
-                                </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Pending</div>
+                                <div id="kpi_pending" class="kpi-value">-</div>
                             </div>
-
-                            {{-- Insights Tab --}}
-                            <div id="tab-insights" class="tab-panel hidden">
-                                <div class="border rounded-xl p-4">
-                                    <div class="font-semibold mb-3">Insights & Recommendations</div>
-                                    <div id="insights_loader" class="insights-loader">
-                                        <div class="insights-spinner"></div>
-                                        <p>Analyzing your productivity patterns...</p>
-                                    </div>
-                                    <ul id="insights_list" class="space-y-2 text-gray-700"></ul>
-                                </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Completion %</div>
+                                <div id="kpi_pct" class="kpi-value">-</div>
                             </div>
+                        </div>
 
+                        <div class="panel">
+                            <div class="panel-title">Task Status Breakdown</div>
+                            <div class="chart-box">
+                                <canvas id="chartStatusPie"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="summary-grid">
+                            <div class="panel">
+                                <div class="panel-title">Daily Summary</div>
+                                <div id="daily_summary" class="summary-text">-</div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-title">Weekly Summary</div>
+                                <div id="weekly_summary" class="summary-text">-</div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-title">Completed Tasks (Last 7 Days)</div>
+                            <div class="chart-box">
+                                <canvas id="chartLast7"></canvas>
+                            </div>
                         </div>
                     </div>
+
+                    <div id="tab-charts" class="tab-panel hidden">
+                        <div class="panel">
+                            <div class="panel-title">Completed vs Pending (Selected Range)</div>
+                            <div class="chart-box">
+                                <canvas id="chartCompletedVsPending"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-title">Historical Trends</div>
+
+                            <div class="hist-header">
+                                <button type="button" id="histPrevBtn" class="hist-nav-btn">← Previous Week</button>
+                                <div id="historicalWeekLabel" class="hist-week-label">Loading week...</div>
+                                <button type="button" id="histNextBtn" class="hist-nav-btn">Next Week →</button>
+                            </div>
+
+                            <div class="chart-box">
+                                <canvas id="chartHistorical"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-insights" class="tab-panel hidden">
+                        <div class="panel">
+                            <div class="panel-title">Insights & Recommendations</div>
+
+                            <div id="insights_loader" class="insights-loader">
+                                <div class="insights-spinner"></div>
+                                <p>Analyzing your productivity patterns...</p>
+                            </div>
+
+                            <div id="insights_list"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -421,13 +668,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // Sidebar toggle
         const sidebar = document.getElementById('sidebar');
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
 
-        // Tab functionality
         const tabButtons = document.querySelectorAll('.tab-btn');
         const panels = {
             overview: document.getElementById('tab-overview'),
@@ -440,6 +685,7 @@
         let statusPieInstance = null;
         let cvpChartInstance = null;
         let historicalChartInstance = null;
+        let historicalWeekOffset = 0;
 
         function destroyIfExists(chart) {
             if (chart) chart.destroy();
@@ -449,14 +695,11 @@
             activeTab = tab;
 
             tabButtons.forEach(btn => {
-                const isActive = btn.dataset.tab === tab;
-                btn.className = isActive
-                    ? "tab-btn inline-flex items-center px-6 py-2.5 rounded-full bg-gray-900 text-white border border-gray-900 shadow-sm transition"
-                    : "tab-btn inline-flex items-center px-6 py-2.5 rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition";
+                btn.classList.toggle('active', btn.dataset.tab === tab);
             });
 
-            Object.keys(panels).forEach(k => {
-                panels[k].classList.toggle('hidden', k !== tab);
+            Object.keys(panels).forEach(key => {
+                panels[key].classList.toggle('hidden', key !== tab);
             });
 
             if (tab === 'overview') loadOverview();
@@ -472,9 +715,11 @@
             const form = document.getElementById('filters');
             const data = new FormData(form);
             const params = new URLSearchParams();
+
             for (const [k, v] of data.entries()) {
                 if (v) params.set(k, v);
             }
+
             return params.toString();
         }
 
@@ -512,9 +757,14 @@
                     type: 'pie',
                     data: {
                         labels: ['Completed', 'Pending'],
-                        datasets: [{ data: [json.kpis.completed_tasks, json.kpis.pending_tasks] }]
+                        datasets: [{
+                            data: [json.kpis.completed_tasks, json.kpis.pending_tasks]
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
                 });
             }
 
@@ -525,12 +775,20 @@
                     type: 'bar',
                     data: {
                         labels: json.last7CompletedChart.labels,
-                        datasets: [{ label: 'Completed Tasks', data: json.last7CompletedChart.data }]
+                        datasets: [{
+                            label: 'Completed Tasks',
+                            data: json.last7CompletedChart.data
+                        }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
                     }
                 });
             }
@@ -556,10 +814,32 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
                     }
                 });
             }
+
+            await loadHistoricalWeek();
+        }
+
+        async function loadHistoricalWeek() {
+            const category = document.querySelector('select[name="category"]').value;
+            const qs = new URLSearchParams();
+
+            qs.set('week_offset', historicalWeekOffset);
+
+            // Optional: still allow category filter to affect historical chart
+            if (category) qs.set('category', category);
+
+            const res = await fetch(`/analytics/historical-week-data?${qs.toString()}`);
+            const json = await res.json();
+
+            document.getElementById('historicalWeekLabel').textContent = json.week_label;
 
             const canvas2 = document.getElementById('chartHistorical');
             if (canvas2) {
@@ -567,37 +847,65 @@
                 historicalChartInstance = new Chart(canvas2.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: json.historical.weeks,
-                        datasets: [{ label: 'Completed (Weekly)', data: json.historical.counts }]
+                        labels: json.labels,
+                        datasets: [{
+                            label: 'Completed (Weekly)',
+                            data: json.counts
+                        }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
                     }
                 });
             }
         }
 
+        document.getElementById('histPrevBtn').addEventListener('click', () => {
+            historicalWeekOffset--;
+            loadHistoricalWeek();
+        });
+
+        document.getElementById('histNextBtn').addEventListener('click', () => {
+            historicalWeekOffset++;
+            loadHistoricalWeek();
+        });
+
         async function loadInsights() {
             const loader = document.getElementById('insights_loader');
-            const ul = document.getElementById('insights_list');
+            const wrap = document.getElementById('insights_list');
 
-            ul.innerHTML = '';
+            wrap.innerHTML = '';
             loader.style.display = "block";
 
-            const qs = getQueryParams();
-            const res = await fetch(`/analytics/insights-data?${qs}`);
-            const json = await res.json();
+            try {
+                const qs = getQueryParams();
+                const res = await fetch(`/analytics/insights-data?${qs}`);
+                const json = await res.json();
 
-            loader.style.display = "none";
+                loader.style.display = "none";
 
-            json.insights.forEach(msg => {
-                const li = document.createElement('li');
-                li.className = "border rounded-lg p-3 bg-gray-50";
-                li.textContent = msg;
-                ul.appendChild(li);
-            });
+                json.insights.forEach(msg => {
+                    const item = document.createElement('div');
+                    item.className = "insight-item";
+                    item.innerHTML = msg;
+                    wrap.appendChild(item);
+                });
+            } catch (error) {
+                loader.style.display = "none";
+                wrap.innerHTML = `
+                    <div class="insight-item">
+                        Unable to load insights right now.
+                    </div>
+                `;
+                console.error(error);
+            }
         }
 
         setActiveTab('overview');
