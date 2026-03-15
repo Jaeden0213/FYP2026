@@ -1161,7 +1161,8 @@
                 </svg>
             </div>
             
-            <h2 class="empty-state-title">&nbsp;&nbsp;&nbsp; Your workspace is empty! 🌟</h2>
+            <h2 class="empty-state-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Your workspace is empty! </h2>
+            <h2 class="empty-state-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No tasks due today!</h2>
             
             
            

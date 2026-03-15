@@ -161,13 +161,15 @@
         }
 
         .password-requirements {
-            margin-top: 0.75rem;
-            padding: 0.75rem;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            font-size: 0.85rem;
-        }
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 8px;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
 
         .requirement-item {
             display: flex;
@@ -249,132 +251,201 @@
                 padding: 1rem;
             }
         }
+
+        /* ===== Password Strength Meter ===== */
+.strength-meter-container {
+    margin-top: 1rem;
+    background: #f1f5f9;
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    gap: 4px;
+}
+
+.strength-segment {
+    flex: 1;
+    height: 100%;
+    background: #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+/* Strength Colors */
+.strength-weak .segment-1 { background: #ef4444; }
+.strength-fair .segment-1, .strength-fair .segment-2 { background: #f59e0b; }
+.strength-good .segment-1, .strength-good .segment-2, .strength-good .segment-3 { background: #10b981; }
+.strength-strong .strength-segment { background: #059669; }
+
+/* ===== Requirement Checklist ===== */
+.password-requirements {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.requirement-item.valid {
+    color: #10b981;
+}
+
+.requirement-item i {
+    font-size: 10px;
+}
     </style>
 
    
         <div class="reset-password-card">
-            <div class="card-gradient"></div>
-            
-            <div class="card-header">
-                <h2>Reset Password</h2>
-                <p>Create a new password for your account</p>
-            </div>
+    <div class="card-gradient"></div>
 
-            <div class="card-content">
-                <!-- Info Box -->
-                <div class="info-box">
-                    <div class="info-icon">🔐</div>
-                    <div class="info-text">
-                        {{ __('Choose a strong password that you don\'t use elsewhere. We recommend at least 8 characters with a mix of letters, numbers, and symbols.') }}
-                    </div>
-                </div>
+    <div class="card-header">
+        <h2>Reset Password</h2>
+        <p>Create a new password for your account</p>
+    </div>
 
-                <form method="POST" action="{{ route('password.store') }}">
-                    @csrf
-
-                    <!-- Password Reset Token -->
-                    <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-                    <!-- Email Address -->
-                    <div class="form-group">
-                        <label for="email" class="input-label">{{ __('Email Address') }}</label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">📧</span>
-                            <input 
-                                id="email" 
-                                class="text-input" 
-                                type="email" 
-                                name="email" 
-                                value="{{ old('email', $request->email) }}"
-                                placeholder="your@email.com"
-                                required 
-                                autofocus 
-                                autocomplete="username"
-                                readonly
-                            />
-                        </div>
-
-                        @error('email')
-                            <div class="error-message">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <!-- New Password -->
-                    <div class="form-group">
-                        <label for="password" class="input-label">{{ __('New Password') }}</label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">🔒</span>
-                            <input 
-                                id="password" 
-                                class="text-input" 
-                                type="password" 
-                                name="password" 
-                                placeholder="••••••••"
-                                required 
-                                autocomplete="new-password"
-                            />
-                        </div>
-
-                       
-                        @error('password')
-                            <div class="error-message">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <!-- Confirm Password -->
-                    <div class="form-group">
-                        <label for="password_confirmation" class="input-label">{{ __('Confirm New Password') }}</label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">✓</span>
-                            <input 
-                                id="password_confirmation" 
-                                class="text-input" 
-                                type="password" 
-                                name="password_confirmation" 
-                                placeholder="••••••••"
-                                required 
-                                autocomplete="new-password"
-                            />
-                        </div>
-
-                        @error('password_confirmation')
-                            <div class="error-message">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <button type="submit" class="btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        {{ __('Reset Password') }}
-                    </button>
-
-                    <a href="{{ route('login') }}" class="back-link">
-                        <span>←</span> {{ __('Back to Login') }}
-                    </a>
-                </form>
+    <div class="card-content">
+        <div class="info-box">
+            <div class="info-icon">🔐</div>
+            <div class="info-text">
+                {{ __('Choose a strong password that you don\'t use elsewhere. We recommend at least 8 characters with a mix of letters, numbers, and symbols.') }}
             </div>
         </div>
+
+        <form method="POST" action="{{ route('password.store') }}">
+            @csrf
+
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+            <div class="form-group">
+                <label for="email" class="input-label">{{ __('Email Address') }}</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📧</span>
+                    <input id="email" class="text-input" type="email" name="email"
+                        value="{{ old('email', $request->email) }}" placeholder="your@email.com" required autofocus
+                        autocomplete="username" readonly />
+                </div>
+                @error('email')
+                    <div class="error-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="input-label">{{ __('New Password') }}</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input id="password" class="text-input" type="password" name="password" placeholder="••••••••"
+                        required autocomplete="new-password" oninput="checkPasswordStrength(this.value)" />
+                </div>
+
+                <div class="strength-meter-container" id="strength-meter">
+                    <div class="strength-segment segment-1"></div>
+                    <div class="strength-segment segment-2"></div>
+                    <div class="strength-segment segment-3"></div>
+                    <div class="strength-segment segment-4"></div>
+                </div>
+
+                <div class="password-requirements">
+                    <div class="requirement-item" id="req-length"><i>●</i> 8+ characters</div>
+                    <div class="requirement-item" id="req-upper"><i>●</i> Uppercase (A-Z)</div>
+                    <div class="requirement-item" id="req-lower"><i>●</i> Lowercase (a-z)</div>
+                    <div class="requirement-item" id="req-number"><i>●</i> Number (0-9)</div>
+                    <div class="requirement-item" id="req-special"><i>●</i> Symbol (!@#$)</div>
+                </div>
+
+                @error('password')
+                    <div class="error-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirmation" class="input-label">{{ __('Confirm New Password') }}</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✓</span>
+                    <input id="password_confirmation" class="text-input" type="password" name="password_confirmation"
+                        placeholder="••••••••" required autocomplete="new-password" />
+                </div>
+                @error('password_confirmation')
+                    <div class="error-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                {{ __('Reset Password') }}
+            </button>
+
+            <a href="{{ route('login') }}" class="back-link">
+                <span>←</span> {{ __('Back to Login') }}
+            </a>
+        </form>
+    </div>
+</div>
+
+        <script>
+function checkPasswordStrength(password) {
+    const meter = document.getElementById('strength-meter');
+    const requirements = {
+        length: password.length >= 8,
+        upper: /[A-Z]/.test(password),
+        lower: /[a-z]/.test(password), // New 5th check
+        number: /[0-9]/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    // Update Checklist Colors
+    updateRequirement('req-length', requirements.length);
+    updateRequirement('req-upper', requirements.upper);
+    updateRequirement('req-lower', requirements.lower); // New 5th check
+    updateRequirement('req-number', requirements.number);
+    updateRequirement('req-special', requirements.special);
+
+    // Calculate Score (Now out of 5)
+    let score = Object.values(requirements).filter(Boolean).length;
+
+    // Update Meter Class (Adjusted for 5 points)
+    meter.className = 'strength-meter-container'; 
+    if (password.length > 0) {
+        if (score <= 2) meter.classList.add('strength-weak');
+        else if (score === 3) meter.classList.add('strength-fair');
+        else if (score === 4) meter.classList.add('strength-good');
+        else if (score === 5) meter.classList.add('strength-strong');
+    }
+}
+
+function updateRequirement(id, isValid) {
+    const el = document.getElementById(id);
+    if (isValid) {
+        el.classList.add('valid');
+        el.querySelector('i').innerHTML = '✓';
+    } else {
+        el.classList.remove('valid');
+        el.querySelector('i').innerHTML = '●';
+    }
+}
+</script>
     

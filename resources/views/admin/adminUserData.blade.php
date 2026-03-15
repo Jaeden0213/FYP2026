@@ -13,7 +13,7 @@
             <div class="mb-8">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="page-title">User Growth Statistics</h1>
+                        <h1 class="page-title">User Data</h1>
                     </div>
                     <div class="flex items-center space-x-2">
                         <span class="text-sm text-gray-500">Total Users:</span>
